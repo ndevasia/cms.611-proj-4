@@ -1,0 +1,33 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class getIngredient : MonoBehaviour
+{
+    int[] numberColors = new int[6];
+    private void Start()
+    {
+        for(int i = 0; i < 6; i++)
+        {
+            numberColors[i] = 0;
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Ingredient")
+        {
+            //get the color of the ingredient and change the player color to it
+            Color colColor = collision.gameObject.GetComponent<Renderer>().material.color;
+            this.gameObject.GetComponent<Renderer>().material.color = colColor;
+            //update the collected ingredients and change the text
+            numberColors[collision.gameObject.GetComponent<ingredientProperties>().colorIndex] += 1;
+            FindObjectOfType<GameManager>().GetComponent<GameManager>().updateText(numberColors);
+        }
+        else if (collision.gameObject.tag == "Wall")
+        {
+            //reset the speed of the player if collide with the wall
+            this.gameObject.GetComponent<PlayerMovement>().resetSpeed();
+        }
+    }
+}
