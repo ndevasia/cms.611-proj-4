@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class getIngredient : MonoBehaviour
 {
-    int[] numberColors = new int[6];
+    int[] numberColors = new int[Data.numColors];
     private void Start()
     {
-        for(int i = 0; i < 6; i++)
+        for(int i = 0; i < Data.numColors; i++)
         {
             numberColors[i] = 0;
         }
@@ -29,5 +29,14 @@ public class getIngredient : MonoBehaviour
             //reset the speed of the player if collide with the wall
             this.gameObject.GetComponent<PlayerMovement>().resetSpeed();
         }
+    }
+
+    public void resetIngredients()
+    {
+        for (int i = 0; i < Data.numColors; i++)
+        {
+            numberColors[i] = 0;
+        }
+        FindObjectOfType<GameManager>().GetComponent<GameManager>().updateText(numberColors);
     }
 }
