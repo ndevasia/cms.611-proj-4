@@ -1,5 +1,25 @@
 
+<<<<<<< HEAD
 === Mon Apr  1 14:24:03 2019
+=======
+=== Wed Apr 10 14:26:04 2019
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.package-manager-ui from version 2.0.3 to 2.0.7
+
+=== Wed Apr 10 15:04:21 2019
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.package-manager-ui from version 2.0.3 to 2.0.7
+
+=== Wed Apr 10 15:09:28 2019
+>>>>>>> af0bec1649832c073a91cd5b0eca1aa6252334d2
 
 Packages were changed.
 Update Mode: updateDependencies

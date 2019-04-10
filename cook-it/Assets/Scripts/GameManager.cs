@@ -24,6 +24,11 @@ public class GameManager : MonoBehaviour
         clone.GetComponent<ingredientProperties>().color = colorNames[i];
     }
 
+    public Text failTimesText;
+    int failTimes = 0;
+
+    public Text stepText;
+    int step = 1;
     // Update is called once per frame
     void Update()
     {
@@ -42,10 +47,22 @@ public class GameManager : MonoBehaviour
             clone.GetComponent<ingredientProperties>().color = colorNames[i];
         }
 
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
+            //clean the collected time and update the failTimes;
+            failTimes += 1;
+            failTimesText.text = "Fails: " + failTimes.ToString() + " times";
             GameObject.Find("Player").GetComponent<getIngredient>().resetIngredients();
         }
+
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            //clean the collected time and update the steps;
+            step += 1;
+            stepText.text = "Step: " + failTimes.ToString() ;
+            GameObject.Find("Player").GetComponent<getIngredient>().resetIngredients();
+        }
+
     }
 
     public Text currentStates;
@@ -58,6 +75,8 @@ public class GameManager : MonoBehaviour
             currentStates.text += (colorNames[i] + ": " + numberColors[i].ToString()+" , ");
         }  
     }
+
+    
 
     
 }
