@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
         clone = Instantiate(Ingredient, pos, Quaternion.identity);
         int i = Random.Range(0, colors.Length);
         clone.GetComponent<ingredientProperties>().colorIndex = i;
-        clone.GetComponent<Renderer>().material.color = colors[i];
+        clone.GetComponent<SpriteRenderer>().material.color = colors[i];
         clone.GetComponent<ingredientProperties>().color = colorNames[i];
     }
 
@@ -43,8 +43,9 @@ public class GameManager : MonoBehaviour
             clone = Instantiate(Ingredient, pos, Quaternion.identity);
             int i = Random.Range(0, colors.Length);
             clone.GetComponent<ingredientProperties>().colorIndex = i;
-            clone.GetComponent<Renderer>().material.color = colors[i];
+            clone.GetComponent<SpriteRenderer>().material.color = colors[i];
             clone.GetComponent<ingredientProperties>().color = colorNames[i];
+            Debug.Log("create an ingredient with color:" + colorNames[i]);
         }
 
         if (Input.GetKeyDown(KeyCode.Space))

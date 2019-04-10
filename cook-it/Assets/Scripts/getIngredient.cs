@@ -13,13 +13,13 @@ public class getIngredient : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Ingredient")
         {
             //get the color of the ingredient and change the player color to it
-            Color colColor = collision.gameObject.GetComponent<Renderer>().material.color;
-            this.gameObject.GetComponent<Renderer>().material.color = colColor;
+            Color colcolor = collision.gameObject.GetComponent<Renderer>().material.color;
+            this.gameObject.GetComponent<SpriteRenderer>().material.color = colcolor;
             //update the collected ingredients and change the text
             numberColors[collision.gameObject.GetComponent<ingredientProperties>().colorIndex] += 1;
             FindObjectOfType<GameManager>().GetComponent<GameManager>().updateText(numberColors);
