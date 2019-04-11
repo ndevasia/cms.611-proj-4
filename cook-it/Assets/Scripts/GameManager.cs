@@ -10,25 +10,23 @@ public class GameManager : MonoBehaviour
     float currentTime = 0;
     Color[] colors = Data.colors;
     string[] colorNames = Data.colorNames;
-    // Start is called before the first frame update
-    void Start()
-    {
-        //generate the first ingredient
-        Vector3 pos = new Vector3(0, 5, 0);
-        //generate an ingredient and assign some properties to it
-        GameObject clone;
-        clone = Instantiate(Ingredient, pos, Quaternion.identity);
-        int i = Random.Range(0, colors.Length);
-        clone.GetComponent<ingredientProperties>().colorIndex = i;
-        clone.GetComponent<SpriteRenderer>().material.color = colors[i];
-        clone.GetComponent<ingredientProperties>().color = colorNames[i];
-    }
+    public Sprite[] ingredientSprite;
 
     public Text failTimesText;
     int failTimes = 0;
 
     public Text stepText;
     int step = 1;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        //generate the first ingredient
+        Vector3 pos = new Vector3(0, 5, 0);
+        //generate an ingredient and assign some properties to it
+        createIngredient(pos);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -39,13 +37,7 @@ public class GameManager : MonoBehaviour
             currentTime += -genTime;
             float i_x = Random.Range(-4, 5);
             Vector3 pos = new Vector3(i_x, 5, 0);
-            GameObject clone;
-            clone = Instantiate(Ingredient, pos, Quaternion.identity);
-            int i = Random.Range(0, colors.Length);
-            clone.GetComponent<ingredientProperties>().colorIndex = i;
-            clone.GetComponent<SpriteRenderer>().material.color = colors[i];
-            clone.GetComponent<ingredientProperties>().color = colorNames[i];
-            Debug.Log("create an ingredient with color:" + colorNames[i]);
+            createIngredient(pos);
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -64,6 +56,22 @@ public class GameManager : MonoBehaviour
             GameObject.Find("Player").GetComponent<getIngredient>().resetIngredients();
         }
 
+    }
+
+    public void createIngredient(Vector3 pos)
+    {
+        GameObject clone;
+        clone = Instantiate(Ingredient, pos, Quaternion.identity);
+
+        // set the ingredient type here
+        int ingredientIndex = Random.Range(0, ingredientSprite.Length);
+        clone.GetComponent<SpriteRenderer>().sprite = ingredientSprite[ingredientIndex];
+        Debug.Log("create an ingredient with color:" + ingredientSprite[ingredientIndex]);
+
+        /*int i = Random.Range(0, colors.Length);
+        clone.GetComponent<ingredientProperties>().colorIndex = i;
+        clone.GetComponent<SpriteRenderer>().material.color = colors[i];
+        clone.GetComponent<ingredientProperties>().color = colorNames[i];*/
     }
 
     public Text currentStates;
