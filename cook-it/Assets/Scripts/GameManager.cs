@@ -8,8 +8,10 @@ public class GameManager : MonoBehaviour
     public GameObject Ingredient;
     public float genTime = 1;     //ingredient generation time interval
     float currentTime = 0;
-    Color[] colors = Data.colors;
-    string[] colorNames = Data.colorNames;
+    //Color[] colors = Data.colors;
+    //string[] colorNames = Data.colorNames;
+    GameObject player;
+    Dictionary<string, int> collectedIngredients = new Dictionary<string, int>();
     public Sprite[] ingredientSprite;
 
     public Text failTimesText;
@@ -18,9 +20,15 @@ public class GameManager : MonoBehaviour
     public Text stepText;
     int step = 1;
 
+    public Text currentStates;
+
     // Start is called before the first frame update
     void Start()
     {
+        // find the Player
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        player = players[0];
+
         //generate the first ingredient
         Vector3 pos = new Vector3(0, 5, 0);
         //generate an ingredient and assign some properties to it
@@ -45,15 +53,15 @@ public class GameManager : MonoBehaviour
             //clean the collected time and update the failTimes;
             failTimes += 1;
             failTimesText.text = "Fails: " + failTimes.ToString() + " times";
-            GameObject.Find("Player").GetComponent<getIngredient>().resetIngredients();
+            player.GetComponent<getIngredient>().resetIngredients();
         }
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
             //clean the collected time and update the steps;
             step += 1;
-            stepText.text = "Step: " + failTimes.ToString() ;
-            GameObject.Find("Player").GetComponent<getIngredient>().resetIngredients();
+            stepText.text = "Step: " + step.ToString();
+            player.GetComponent<getIngredient>().resetIngredients();
         }
 
     }
@@ -66,7 +74,7 @@ public class GameManager : MonoBehaviour
         // set the ingredient type here
         int ingredientIndex = Random.Range(0, ingredientSprite.Length);
         clone.GetComponent<SpriteRenderer>().sprite = ingredientSprite[ingredientIndex];
-        Debug.Log("create an ingredient with color:" + ingredientSprite[ingredientIndex]);
+        Debug.Log("create an ingredient:" + ingredientSprite[ingredientIndex]);
 
         /*int i = Random.Range(0, colors.Length);
         clone.GetComponent<ingredientProperties>().colorIndex = i;
@@ -74,15 +82,14 @@ public class GameManager : MonoBehaviour
         clone.GetComponent<ingredientProperties>().color = colorNames[i];*/
     }
 
-    public Text currentStates;
-    public void updateText(int[] numberColors)
+    public void updateText(Dictionary<string, int> collectedIngredients)
     {
         //this function will update the text showing the collected ingredients
-        currentStates.text = "";
-        for(int i =0;i<Data.numColors; i++)
+        currentStates.text = "Collected Ingredients: ";
+        foreach (KeyValuePair<string, int> kvp in collectedIngredients)
         {
-            currentStates.text += (colorNames[i] + ": " + numberColors[i].ToString()+" , ");
-        }  
+            currentStates.text += (kvp.Key + ": " + kvp.Value.ToString() + " , ");
+        }
     }
 
     

@@ -9,4 +9,9 @@ public class ingredientProperties : MonoBehaviour
     public string color;
     public int colorIndex;
     public string ingredientName; // do not call variable "name", conflicts with inherited variables
+
+    private void Start()
+    {
+        ingredientName = GetComponent<SpriteRenderer>().sprite.name;
+    }
 }
