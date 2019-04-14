@@ -3,7 +3,12 @@ guid: 6e6ea02274a50ae4d816e4870bfb411f
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - Ingredient: {fileID: 8390433841218631953, guid: 288548ad4e6ec5d4b9b2ad3c32e7ce4d,
+      type: 3}
+  - failTimesText: {instanceID: 0}
+  - stepText: {instanceID: 0}
+  - currentStates: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

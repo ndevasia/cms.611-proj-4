@@ -8,5 +8,10 @@ public class ingredientProperties : MonoBehaviour
     // Start is called before the first frame update
     public string color;
     public int colorIndex;
-    public string name;
+    public string ingredientName; // do not call variable "name", conflicts with inherited variables
+
+    private void Start()
+    {
+        ingredientName = GetComponent<SpriteRenderer>().sprite.name;
+    }
 }
