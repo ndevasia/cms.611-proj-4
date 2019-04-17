@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -467,7 +467,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.33214286, y: 0.25357142}
+    oldSize: {x: 9, y: 9}
     newSize: {x: 4.65, y: 3.55}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -513,7 +513,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 873665e8fc979bd4e9303c3a634c219c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 99fa1af43cd48409f886fcabc10f7a7c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -533,7 +533,7 @@ Transform:
   m_GameObject: {fileID: 969784337}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -2, z: 0}
-  m_LocalScale: {x: 8, y: 3, z: 1}
+  m_LocalScale: {x: 0.4063187, y: 0.44464663, z: 0.29553136}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 5
@@ -601,7 +601,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: a2f7bd8bb2a2c48f09c66bb5f1c7eba8, type: 3}
   - {fileID: 21300000, guid: 8793703b70a1c4a6aabb3abe7fd0502a, type: 3}
   - {fileID: 21300000, guid: ef8d0ee0827a3454e9b77234738fb2c5, type: 3}
-  - {fileID: 21300000, guid: ded0f5201d29af64cbae991a2fd4d9b5, type: 3}
+  - {fileID: 21300000, guid: e9628c654afb04709a0a9b4abace8fe6, type: 3}
   failTimesText: {fileID: 889588715}
   stepText: {fileID: 1613520915}
   currentStates: {fileID: 1833116845}
