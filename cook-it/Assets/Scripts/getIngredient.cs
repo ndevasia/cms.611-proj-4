@@ -11,10 +11,12 @@ public class getIngredient : MonoBehaviour
     private void Start()
     {
         gm = FindObjectOfType<GameManager>();
+        
         /*for(int i = 0; i < Data.numColors; i++)
         {
             numberColors[i] = 0;
         }*/
+        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -38,6 +40,7 @@ public class getIngredient : MonoBehaviour
                 collectedIngredients[ingredientName] = 1;
             }
             gm.GetComponent<GameManager>().updateText(collectedIngredients);
+            
         }
         else if (collision.gameObject.tag == "Wall")
         {
@@ -56,4 +59,6 @@ public class getIngredient : MonoBehaviour
         collectedIngredients = new Dictionary<string, int>();
         gm.GetComponent<GameManager>().updateText(collectedIngredients);
     }
+
+
 }

@@ -12,6 +12,10 @@ public class GameManager : MonoBehaviour
     //string[] colorNames = Data.colorNames;
     GameObject player;
     Dictionary<string, int> collectedIngredients = new Dictionary<string, int>();
+
+    Dictionary<int, Dictionary<string, int>> recipe = new Dictionary<int, Dictionary<string, int>>();
+    int numSteps;
+
     public Sprite[] ingredientSprite;
 
     public Text failTimesText;
@@ -33,6 +37,12 @@ public class GameManager : MonoBehaviour
         Vector3 pos = new Vector3(0, 5, 0);
         //generate an ingredient and assign some properties to it
         createIngredient(pos);
+        
+        //hardcode the recipe
+        recipe[0] = new Dictionary<string, int> { { "flour", 4 }, { "sugar", 2 }, { "butter", 1 } };
+        recipe[1] = new Dictionary<string, int> { { "oil", 3 }, { "heat", 2 } };
+        recipe[2] = new Dictionary<string, int> { { "parsley", 1 }, { "sugar", 2 } };
+        numSteps = recipe.Count;
     }
 
     // Update is called once per frame
@@ -64,6 +74,7 @@ public class GameManager : MonoBehaviour
             player.GetComponent<getIngredient>().resetIngredients();
         }
 
+
     }
 
     public void createIngredient(Vector3 pos)
@@ -86,11 +97,62 @@ public class GameManager : MonoBehaviour
     {
         //this function will update the text showing the collected ingredients
         currentStates.text = "Collected Ingredients: ";
+        Dictionary<string, int> currentRecipe = recipe[step - 1];
+        bool enterNextStep = true;
+        bool fail = false;
+        //check if the condition is fullfilled or violated
+        foreach(KeyValuePair<string,int> kvp in collectedIngredients)
+        {
+            if (currentRecipe.ContainsKey(kvp.Key)){
+                if (collectedIngredients[kvp.Key] > currentRecipe[kvp.Key])
+                {
+                    enterNextStep = false;
+                    failTimes += 1;
+                    fail = true;
+                }    
+            }
+            else
+            {
+                enterNextStep = false;
+                failTimes += 1;
+                fail = true; 
+            }
+        }
+        foreach (KeyValuePair<string, int> kvp in currentRecipe)
+        {
+            if (!collectedIngredients.ContainsKey(kvp.Key))
+            {
+                enterNextStep = false;
+            }
+            else
+            {
+                if (collectedIngredients[kvp.Key] != currentRecipe[kvp.Key])
+                {
+                    enterNextStep = false;
+                }
+            }
+        }
+        if (enterNextStep)
+        {
+            step += 1;
+            stepText.text = "Step: " + step.ToString();
+            collectedIngredients = new Dictionary<string, int>();
+        }
+        if (fail)
+        {
+            collectedIngredients = new Dictionary<string, int>();
+            player.GetComponent<getIngredient>().resetIngredients();
+        }
+        failTimesText.text = "Fails: " + failTimes.ToString() + " times";
+        stepText.text = "Step: " + step.ToString();
+
         foreach (KeyValuePair<string, int> kvp in collectedIngredients)
         {
             currentStates.text += (kvp.Key + ": " + kvp.Value.ToString() + " , ");
         }
+        
     }
+
 
     
 
