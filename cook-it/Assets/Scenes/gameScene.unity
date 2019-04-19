@@ -112,6 +112,12 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &97971848 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4855190516976376988, guid: c436eceda3178c842919fde50a68750b,
+    type: 3}
+  m_PrefabInstance: {fileID: 4855190517735116340}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &329479000
 GameObject:
   m_ObjectHideFlags: 0
@@ -260,6 +266,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &750268279 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4855190516976376988, guid: c436eceda3178c842919fde50a68750b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1651746609}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &843977277
 GameObject:
   m_ObjectHideFlags: 0
@@ -595,7 +607,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Ingredient: {fileID: 8390433841218631953, guid: 288548ad4e6ec5d4b9b2ad3c32e7ce4d,
     type: 3}
-  genTime: 1
+  genTime: 0.5
   ingredientSprite:
   - {fileID: 21300000, guid: 7926b257ca45f45ee94770609d3dfe06, type: 3}
   - {fileID: 21300000, guid: a2f7bd8bb2a2c48f09c66bb5f1c7eba8, type: 3}
@@ -606,6 +618,8 @@ MonoBehaviour:
   stepText: {fileID: 1613520915}
   currentStates: {fileID: 1833116845}
   currentStepRecipe: {fileID: 1816567777}
+  leftWall: {fileID: 97971848}
+  rightWall: {fileID: 750268279}
 --- !u!4 &1099148384
 Transform:
   m_ObjectHideFlags: 0

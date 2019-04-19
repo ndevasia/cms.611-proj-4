@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviour
     public Text currentStates;
     public Text currentStepRecipe;
 
+    public GameObject leftWall;
+    public GameObject rightWall;
     // Start is called before the first frame update
     void Start()
     {
@@ -56,7 +58,7 @@ public class GameManager : MonoBehaviour
         {
             //generate a new ingredient and assign properties
             currentTime += -genTime;
-            float i_x = Random.Range(-4, 5);
+            float i_x = Random.Range(leftWall.transform.position[0]+1, rightWall.transform.position[0]-1);
             Vector3 pos = new Vector3(i_x, 5, 0);
             createIngredient(pos);
         }
@@ -109,6 +111,7 @@ public class GameManager : MonoBehaviour
                 case 1: 
                     fail = true;
                     failTimes += 1;
+                    ratio = 1;
                     break;
                 case 2:
                     //update the ratio to desired value 
