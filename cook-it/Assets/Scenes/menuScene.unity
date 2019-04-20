@@ -266,7 +266,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 197844053}
-        m_MethodName: toTutorial
+        m_MethodName: toInstructions
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -501,7 +501,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   game: gameScene
-  tutorial: tutorialScene
+  instructions: instructionsScene
 --- !u!1 &227444118
 GameObject:
   m_ObjectHideFlags: 0
@@ -1182,7 +1182,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Start Tutorial!
+  m_Text: Instructions
 --- !u!222 &1661022911
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -7,7 +7,7 @@ public class SceneTransitions : MonoBehaviour
 {
     // Start is called before the first frame update
     public string game;
-    public string tutorial;
+    public string instructions;
     void Start()
     {
         
@@ -24,8 +24,10 @@ public class SceneTransitions : MonoBehaviour
         SceneManager.LoadScene(game);
     }
 
-    public void toTutorial()
+    public void toInstructions()
     {
-        SceneManager.LoadScene(tutorial);
+        SceneManager.LoadScene(instructions);
     }
+
+
 }
