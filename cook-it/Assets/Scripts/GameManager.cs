@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
 
     Dictionary<int, Dictionary<string, int>> recipe = new Dictionary<int, Dictionary<string, int>>();
     int numSteps;
+    int ratio = 1;
+    int badTasteIndex = 0;
 
     public Sprite[] ingredientSprite;
 
@@ -25,7 +27,10 @@ public class GameManager : MonoBehaviour
     int step = 1;
 
     public Text currentStates;
+    public Text currentStepRecipe;
 
+    public GameObject leftWall;
+    public GameObject rightWall;
     // Start is called before the first frame update
     void Start()
     {
@@ -53,7 +58,7 @@ public class GameManager : MonoBehaviour
         {
             //generate a new ingredient and assign properties
             currentTime += -genTime;
-            float i_x = Random.Range(-4, 5);
+            float i_x = Random.Range(leftWall.transform.position[0]+1, rightWall.transform.position[0]-1);
             Vector3 pos = new Vector3(i_x, 5, 0);
             createIngredient(pos);
         }
@@ -69,9 +74,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Return))
         {
             //clean the collected time and update the steps;
-            step += 1;
-            stepText.text = "Step: " + step.ToString();
-            player.GetComponent<getIngredient>().resetIngredients();
+            Time.timeScale = 1;
         }
 
 
@@ -95,66 +98,157 @@ public class GameManager : MonoBehaviour
 
     public void updateText(Dictionary<string, int> collectedIngredients)
     {
-        //this function will update the text showing the collected ingredients
-        currentStates.text = "Collected Ingredients: ";
-        Dictionary<string, int> currentRecipe = recipe[step - 1];
-        bool enterNextStep = true;
+        bool enterNextStep = false;
         bool fail = false;
-        //check if the condition is fullfilled or violated
-        foreach(KeyValuePair<string,int> kvp in collectedIngredients)
+        if (step >= numSteps)
         {
-            if (currentRecipe.ContainsKey(kvp.Key)){
-                if (collectedIngredients[kvp.Key] > currentRecipe[kvp.Key])
-                {
-                    enterNextStep = false;
-                    failTimes += 1;
+            currentStates.text = "Congratulation! You have a " + badTasteIndex.ToString() + "-level bad taste meal!";
+        }
+        if (step == 1)
+        {
+            switch (CompareIngredient(collectedIngredients,recipe,ratio,step)){
+                case 0: break;
+                case 1: 
                     fail = true;
-                }    
-            }
-            else
-            {
-                enterNextStep = false;
-                failTimes += 1;
-                fail = true; 
+                    failTimes += 1;
+                    ratio = 1;
+                    break;
+                case 2:
+                    //update the ratio to desired value 
+                    ratio += 1;
+                    break;
+                case 3:
+                    enterNextStep = true;
+                    break;
+                default:
+                    break;
             }
         }
-        foreach (KeyValuePair<string, int> kvp in currentRecipe)
+        else
         {
-            if (!collectedIngredients.ContainsKey(kvp.Key))
+            switch (CompareIngredient(collectedIngredients, recipe, ratio, step))
             {
-                enterNextStep = false;
-            }
-            else
-            {
-                if (collectedIngredients[kvp.Key] != currentRecipe[kvp.Key])
-                {
-                    enterNextStep = false;
-                }
+                case 0: break;
+                case 1:
+                    fail = true;
+                    failTimes += 1;
+                    break;
+                case 2:
+                    fail = true;
+                    failTimes += 1;
+                    break;
+                case 3:
+                    enterNextStep = true;
+                    break;
+                default:
+                    break;
             }
         }
+        
         if (enterNextStep)
         {
+            failTimesText.text = "Entering the next step, press Enter to continue!";
             step += 1;
-            stepText.text = "Step: " + step.ToString();
             collectedIngredients = new Dictionary<string, int>();
+            Time.timeScale = 0;
         }
         if (fail)
         {
             collectedIngredients = new Dictionary<string, int>();
             player.GetComponent<getIngredient>().resetIngredients();
+            failTimesText.text = "Fails: " + failTimes.ToString() + " times";
         }
-        failTimesText.text = "Fails: " + failTimes.ToString() + " times";
         stepText.text = "Step: " + step.ToString();
 
+        currentStates.text = "Colledted:";
         foreach (KeyValuePair<string, int> kvp in collectedIngredients)
         {
             currentStates.text += (kvp.Key + ": " + kvp.Value.ToString() + " , ");
         }
-        
+        currentStepRecipe.text = "Need:";
+        foreach (KeyValuePair<string, int> kvp in recipe[step-1])
+        {
+            currentStepRecipe.text += (kvp.Key + ": " + (kvp.Value*ratio).ToString() + " , ");
+        }
     }
 
+    private int CompareIngredient(Dictionary<string, int> collectedIngredients, Dictionary<int, Dictionary<string, int>> recipe, int ratio, int step)
+    {   /*This function takes the collected ingredients, recipe, ratio and current step to compare 
+        return value: 0--the collected ingredients are in the recipe and do not exceed the required quantity (recipe[step]*ratio)
+                      1--the collected ingredients contain something does not belong to the recipe at this step
+                      2--the colllected ingredients contain the right ingredients but some(but not all) of them  exceed the required quantity in this step
+                      3--the collected ingredients contain all the right ingredients and all of them equal or exceed the required quantity
+         */
+        Dictionary<string, int> currentRecipe = recipe[step-1];
+        int numCollected = collectedIngredients.Count;
+        int numRequired = currentRecipe.Count;
+        if (numCollected > numRequired)
+        {
+            return 1;
+        }
 
-    
+        bool exceed = false;
+        if (numCollected < numRequired)
+        {
+            foreach (KeyValuePair<string, int> kvp in collectedIngredients)
+            {
+                //check whether contains anything not in the recipe
+                if (currentRecipe.ContainsKey(kvp.Key))
+                {
+                    //check whether something exceed the required quantity
+                    if (kvp.Value > currentRecipe[kvp.Key] * ratio)
+                    {
+                        exceed = true;   
+                    }
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+            if (exceed)
+            {
+                return 2;
+            }
+            else
+            {
+                return 0;
+            }
+        }
 
-    
+        bool fulfilled = true;
+        if (numCollected == numRequired)
+        {
+            foreach (KeyValuePair<string, int> kvp in collectedIngredients)
+            {
+                //check whether contains anything not in the recipe
+                if (currentRecipe.ContainsKey(kvp.Key))
+                {
+                    //check whether something exceed the required quantity
+                    if (kvp.Value > currentRecipe[kvp.Key] * ratio)
+                    {
+                        exceed = true;
+                    }
+                    if (kvp.Value < currentRecipe[kvp.Key] * ratio)
+                    {
+                        fulfilled = false;
+                    }
+                }
+                else return 1;  
+            }
+            if (fulfilled)
+            {
+                return 3;
+            }
+            else
+            {
+                if (exceed)
+                {
+                    return 2;
+                }
+                else return 0;
+            }
+        }
+        return -1;//error code
+    }
 }
