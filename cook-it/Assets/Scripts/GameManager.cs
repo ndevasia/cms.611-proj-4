@@ -155,6 +155,7 @@ public class GameManager : MonoBehaviour
             failTimesText.text = "Entering the next step, press Enter to continue!";
             step += 1;
             collectedIngredients = new Dictionary<string, int>();
+            player.GetComponent<getIngredient>().resetIngredients();
             Time.timeScale = 0;
         }
         if (fail)
