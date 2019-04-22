@@ -48,6 +48,11 @@ public class GameManager : MonoBehaviour
         recipe[1] = new Dictionary<string, int> { { "oil", 3 }, { "heat", 2 } };
         recipe[2] = new Dictionary<string, int> { { "parsley", 1 }, { "sugar", 2 } };
         numSteps = recipe.Count;
+        currentStepRecipe.text = "Need:";
+        foreach (KeyValuePair<string, int> kvp in recipe[step - 1])
+        {
+            currentStepRecipe.text += (kvp.Key + ": " + (kvp.Value * ratio).ToString() + " , ");
+        }
     }
 
     // Update is called once per frame
