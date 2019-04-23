@@ -75,6 +75,19 @@ public class GameManager : MonoBehaviour
             float i_x = Random.Range(leftWall.transform.position[0]+1, rightWall.transform.position[0]-1);
             Vector3 pos = new Vector3(i_x, 5, 0);
             createIngredient(pos);
+
+            // 25% chance to spawn 2 ingredients
+            if (Random.Range(0, 100) < 25)
+            {
+                float new_i_x = Random.Range(leftWall.transform.position[0] + 1, rightWall.transform.position[0] - 1);
+                // make sure ingredients are minimum 5 distance away (too close = too hard to catch)
+                while (Mathf.Abs(new_i_x - i_x) < 5)
+                {
+                    new_i_x = Random.Range(leftWall.transform.position[0] + 1, rightWall.transform.position[0] - 1);
+                }
+                pos = new Vector3(new_i_x, 5, 0);
+                createIngredient(pos);
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -87,6 +100,11 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
+            if (step > numSteps)
+            {
+                // return to scene 2 (menu screen)
+                UnityEngine.SceneManagement.SceneManager.LoadScene(2);
+            }
             //clean the collected time and update the steps;
             Time.timeScale = 1;
             // [when pressing enter to start game, replace with correct text]
@@ -115,6 +133,7 @@ public class GameManager : MonoBehaviour
         {
             currentStates.text = "Congratulations! You have a " + badTasteIndex.ToString() + "-level bad taste meal!";
             Time.timeScale = 0;
+            return;
             // end the game - go to ending screen(?)
         }
         if (step == 1)
@@ -180,7 +199,7 @@ public class GameManager : MonoBehaviour
         stepText.text = "Step " + step.ToString();
 
         // update collected ingredients
-        currentStates.text = "Collected: ";
+        currentStates.text = "Collected: \n";
         List<string> collected_keys_sorted = new List<string>(collectedIngredients.Keys);
         collected_keys_sorted.Sort();
         foreach (string key in collected_keys_sorted)
