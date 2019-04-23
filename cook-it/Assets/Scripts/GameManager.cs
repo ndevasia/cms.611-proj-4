@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviour
     {
         bool enterNextStep = false;
         bool fail = false;
-        if (step >= numSteps)
+        if (step > numSteps)
         {
             currentStates.text = "Congratulations! You have a " + badTasteIndex.ToString() + "-level bad taste meal!";
             Time.timeScale = 0;
@@ -156,7 +156,7 @@ public class GameManager : MonoBehaviour
                 default:
                     break;
             }
-        }
+        }                                    
         
         if (enterNextStep)
         {
