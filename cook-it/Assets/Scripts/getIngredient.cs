@@ -8,21 +8,31 @@ public class getIngredient : MonoBehaviour
     GameManager gm;
     Dictionary<string, int> collectedIngredients = new Dictionary<string, int>();
 
+    public AudioClip ingredient;
+    public AudioClip wrongIng;
+    public AudioSource audio;
+
     private void Start()
     {
         gm = FindObjectOfType<GameManager>();
-        
+
         /*for(int i = 0; i < Data.numColors; i++)
         {
             numberColors[i] = 0;
         }*/
-        
+
+        AudioSource[] sources = GetComponents<AudioSource>();
+        audio = sources[0];
+
+        ingredient = sources[0].clip;
+        wrongIng = sources[1].clip;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Ingredient")
         {
+            audio.PlayOneShot(ingredient);
             //get the color of the ingredient and change the player color to it
             //Color colcolor = collision.gameObject.GetComponent<Renderer>().material.color;
             //this.gameObject.GetComponent<SpriteRenderer>().material.color = colcolor;
