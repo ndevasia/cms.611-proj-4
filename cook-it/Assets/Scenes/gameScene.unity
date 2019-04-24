@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657838, g: 0.49641234, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -702,6 +702,8 @@ MonoBehaviour:
   Ingredient: {fileID: 8390433841218631953, guid: 288548ad4e6ec5d4b9b2ad3c32e7ce4d,
     type: 3}
   genTime: 0.75
+  secondGenProb: 0.5
+  secondGenRand: 0.2
   ingredientSprite:
   - {fileID: 21300000, guid: 7926b257ca45f45ee94770609d3dfe06, type: 3}
   - {fileID: 21300000, guid: a2f7bd8bb2a2c48f09c66bb5f1c7eba8, type: 3}
@@ -718,7 +720,7 @@ MonoBehaviour:
   progress:
   - {fileID: 21300000, guid: 3c3e0abaad58a4f58879b03aa3a38d9c, type: 3}
   - {fileID: 21300000, guid: 7669acb83bc104eca84b2281a4e329ad, type: 3}
-  - {fileID: 21300000, guid: 087135da82e43624fbafa2d65074e296, type: 3}
+  - {fileID: 21300000, guid: 1b8e68fd7ab9d4b639a46869f4dc66f1, type: 3}
   leftWall: {fileID: 97971848}
   rightWall: {fileID: 750268279}
   ingredient: {fileID: 0}
