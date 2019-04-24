@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
 
     public AudioClip ingredient;
     public AudioClip wrongIng;
+    public AudioClip stageWin;
     public AudioSource audio;
 
     // Start is called before the first frame update
@@ -76,6 +77,7 @@ public class GameManager : MonoBehaviour
 
         ingredient = sources[0].clip;
         wrongIng = sources[1].clip;
+        stageWin = sources[2].clip;
     }
 
     // Update is called once per frame
@@ -198,6 +200,7 @@ public class GameManager : MonoBehaviour
         
         if (enterNextStep)
         {
+            audio.PlayOneShot(stageWin);
             failTimesText.text = "Press Enter to start the next step!";
             step += 1;
             collectedIngredients = new Dictionary<string, int>();
