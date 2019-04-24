@@ -89,6 +89,7 @@ public class GameManager : MonoBehaviour
                     new_i_x = UnityEngine.Random.Range(leftWall.transform.position[0] + 1, rightWall.transform.position[0] - 1);
                 }
                 pos = new Vector3(new_i_x, 5, 0);
+                //pos = new Vector3(i_x + 0.5f, 5, 0);
                 if (UnityEngine.Random.Range(0, 100) < secondGenRand * 100)
                 {
                     createIngredient(pos);
@@ -171,10 +172,9 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    fail = true;
+                    //fail = true;
                     failTimes += 1;
                 }
-                  
                 break;
             case 3:
                 enterNextStep = true;
