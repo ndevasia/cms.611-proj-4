@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +8,8 @@ public class GameManager : MonoBehaviour
 {
     public GameObject Ingredient;
     public float genTime = 1;     //ingredient generation time interval
+    public float secondGenProb = 0.5f; //probalbility to generate two ingredient at the same time
+    public float secondGenRand = 0.2f; //probalbility to generate a random second ingredient instead of from the recipe
     float currentTime = 0;
     //Color[] colors = Data.colors;
     //string[] colorNames = Data.colorNames;
@@ -72,21 +75,28 @@ public class GameManager : MonoBehaviour
         {
             //generate a new ingredient and assign properties
             currentTime += -genTime;
-            float i_x = Random.Range(leftWall.transform.position[0]+1, rightWall.transform.position[0]-1);
+            float i_x = UnityEngine.Random.Range(leftWall.transform.position[0]+1, rightWall.transform.position[0]-1);
             Vector3 pos = new Vector3(i_x, 5, 0);
             createIngredient(pos);
 
-            // 25% chance to spawn 2 ingredients
-            if (Random.Range(0, 100) < 25)
+            //  chance to spawn 2 ingredients
+            if (UnityEngine.Random.Range(0, 100) < secondGenProb*100)
             {
-                float new_i_x = Random.Range(leftWall.transform.position[0] + 1, rightWall.transform.position[0] - 1);
+                float new_i_x = UnityEngine.Random.Range(leftWall.transform.position[0] + 1, rightWall.transform.position[0] - 1);
                 // make sure ingredients are minimum 5 distance away (too close = too hard to catch)
                 while (Mathf.Abs(new_i_x - i_x) < 5)
                 {
-                    new_i_x = Random.Range(leftWall.transform.position[0] + 1, rightWall.transform.position[0] - 1);
+                    new_i_x = UnityEngine.Random.Range(leftWall.transform.position[0] + 1, rightWall.transform.position[0] - 1);
                 }
                 pos = new Vector3(new_i_x, 5, 0);
-                createIngredient(pos);
+                if (UnityEngine.Random.Range(0, 100) < secondGenRand * 100)
+                {
+                    createIngredient(pos);
+                }
+                else
+                {
+                    createIngredient(pos, true);
+                }
             }
         }
 
@@ -114,15 +124,25 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void createIngredient(Vector3 pos)
+    public void createIngredient(Vector3 pos, bool fromRecipe = false)
     {
         GameObject clone;
         clone = Instantiate(Ingredient, pos, Quaternion.identity);
 
         // set the ingredient type here
-        int ingredientIndex = Random.Range(0, ingredientSprite.Length);
-        clone.GetComponent<SpriteRenderer>().sprite = ingredientSprite[ingredientIndex];
-        Debug.Log("create an ingredient:" + ingredientSprite[ingredientIndex]);
+        int ingredientIndex;
+        if (fromRecipe)
+        {
+            int wantedInd = UnityEngine.Random.Range(0,recipe[step - 1].Count - 1);
+            string wantedName = new List<string>(recipe[step - 1].Keys)[wantedInd];
+            clone.GetComponent<SpriteRenderer>().sprite = Array.Find(ingredientSprite, x => x.name.ToString() == wantedName);
+        }
+        else
+        {
+            ingredientIndex = UnityEngine.Random.Range(0, ingredientSprite.Length);
+            clone.GetComponent<SpriteRenderer>().sprite = ingredientSprite[ingredientIndex];
+        }
+        Debug.Log("create an ingredient:" + clone.name.ToString());
     }
 
     public void updateText(Dictionary<string, int> collectedIngredients)
@@ -136,46 +156,34 @@ public class GameManager : MonoBehaviour
             return;
             // end the game - go to ending screen(?)
         }
-        if (step == 1)
-        {
-            switch (CompareIngredient(collectedIngredients,recipe,ratio,step)){
-                case 0: break;
-                case 1: 
-                    fail = true;
-                    failTimes += 1;
-                    ratio = 1;
-                    break;
-                case 2:
+        switch (CompareIngredient(collectedIngredients,recipe,ratio,step)){
+            case 0: break;
+            case 1: 
+                fail = true;
+                failTimes += 1;
+                ratio = 1;
+                break;
+            case 2:
+                if (step == 1)
+                {
                     //update the ratio to desired value 
-                    ratio += 1;
-                    break;
-                case 3:
-                    enterNextStep = true;
-                    break;
-                default:
-                    break;
-            }
+                    ratio += 1; 
+                }
+                else
+                {
+                    fail = true;
+                    failTimes += 1;
+                }
+                  
+                break;
+            case 3:
+                enterNextStep = true;
+                break;
+            default:
+                break;
         }
-        else
-        {
-            switch (CompareIngredient(collectedIngredients, recipe, ratio, step))
-            {
-                case 0: break;
-                case 1:
-                    fail = true;
-                    failTimes += 1;
-                    break;
-                case 2:
-                    fail = true;
-                    failTimes += 1;
-                    break;
-                case 3:
-                    enterNextStep = true;
-                    break;
-                default:
-                    break;
-            }
-        }                                    
+
+                     
         
         if (enterNextStep)
         {
