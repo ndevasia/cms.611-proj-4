@@ -6,6 +6,9 @@ public class collEliminate : MonoBehaviour
 {
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Destroy(this.gameObject);
+        if (collision.gameObject.tag != "Ingredient")
+        {
+            Destroy(this.gameObject);
+        }
     }
 }
