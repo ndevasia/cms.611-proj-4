@@ -38,6 +38,12 @@ public class GameManager : MonoBehaviour
 
     public GameObject leftWall;
     public GameObject rightWall;
+
+    public AudioClip ingredient;
+    public AudioClip wrongIng;
+    public AudioClip stageWin;
+    public AudioSource audio;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -65,6 +71,13 @@ public class GameManager : MonoBehaviour
         {
             currentStepRecipe.text += (kvp.Key + ": " + (kvp.Value * ratio).ToString() + " , ");
         }*/
+
+        AudioSource[] sources = GetComponents<AudioSource>();
+        audio = sources[0];
+
+        ingredient = sources[0].clip;
+        wrongIng = sources[1].clip;
+        stageWin = sources[2].clip;
     }
 
     // Update is called once per frame
@@ -187,6 +200,7 @@ public class GameManager : MonoBehaviour
         
         if (enterNextStep)
         {
+            audio.PlayOneShot(stageWin);
             failTimesText.text = "Press Enter to start the next step!";
             step += 1;
             collectedIngredients = new Dictionary<string, int>();
@@ -200,10 +214,16 @@ public class GameManager : MonoBehaviour
         }
         if (fail)
         {
+            audio.PlayOneShot(wrongIng);
             collectedIngredients = new Dictionary<string, int>();
             player.GetComponent<getIngredient>().resetIngredients();
             failTimesText.text = "Fails: " + failTimes.ToString() + " times";
         }
+        else
+        {
+            audio.PlayOneShot(ingredient);
+        }
+
         stepText.text = "Step " + step.ToString();
 
         // update collected ingredients
