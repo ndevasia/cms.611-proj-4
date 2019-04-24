@@ -29,6 +29,10 @@ public class GameManager : MonoBehaviour
     public Text currentStates;
     public Text currentStepRecipe;
 
+    public Image recipe_progress;
+    public Sprite[] progress;
+    int progress_index = 0;
+
     public GameObject leftWall;
     public GameObject rightWall;
     // Start is called before the first frame update
@@ -37,6 +41,10 @@ public class GameManager : MonoBehaviour
         // find the Player
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         player = players[0];
+
+        // pause the game, press enter when ready to start
+        failTimesText.text = "Press Enter to start the game!";
+        Time.timeScale = 0;
 
         //generate the first ingredient
         Vector3 pos = new Vector3(0, 5, 0);
@@ -48,6 +56,12 @@ public class GameManager : MonoBehaviour
         recipe[1] = new Dictionary<string, int> { { "oil", 3 }, { "heat", 2 } };
         recipe[2] = new Dictionary<string, int> { { "parsley", 1 }, { "sugar", 2 } };
         numSteps = recipe.Count;
+        updateText(collectedIngredients);
+        /*currentStepRecipe.text = "Need:\n";
+        foreach (KeyValuePair<string, int> kvp in recipe[step - 1])
+        {
+            currentStepRecipe.text += (kvp.Key + ": " + (kvp.Value * ratio).ToString() + " , ");
+        }*/
     }
 
     // Update is called once per frame
@@ -61,6 +75,19 @@ public class GameManager : MonoBehaviour
             float i_x = Random.Range(leftWall.transform.position[0]+1, rightWall.transform.position[0]-1);
             Vector3 pos = new Vector3(i_x, 5, 0);
             createIngredient(pos);
+
+            // 25% chance to spawn 2 ingredients
+            if (Random.Range(0, 100) < 25)
+            {
+                float new_i_x = Random.Range(leftWall.transform.position[0] + 1, rightWall.transform.position[0] - 1);
+                // make sure ingredients are minimum 5 distance away (too close = too hard to catch)
+                while (Mathf.Abs(new_i_x - i_x) < 5)
+                {
+                    new_i_x = Random.Range(leftWall.transform.position[0] + 1, rightWall.transform.position[0] - 1);
+                }
+                pos = new Vector3(new_i_x, 5, 0);
+                createIngredient(pos);
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -73,8 +100,15 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
+            if (step > numSteps)
+            {
+                // return to scene 2 (menu screen)
+                UnityEngine.SceneManagement.SceneManager.LoadScene(2);
+            }
             //clean the collected time and update the steps;
             Time.timeScale = 1;
+            // [when pressing enter to start game, replace with correct text]
+            failTimesText.text = "Fails: " + failTimes.ToString() + " times";
         }
 
 
@@ -89,20 +123,18 @@ public class GameManager : MonoBehaviour
         int ingredientIndex = Random.Range(0, ingredientSprite.Length);
         clone.GetComponent<SpriteRenderer>().sprite = ingredientSprite[ingredientIndex];
         Debug.Log("create an ingredient:" + ingredientSprite[ingredientIndex]);
-
-        /*int i = Random.Range(0, colors.Length);
-        clone.GetComponent<ingredientProperties>().colorIndex = i;
-        clone.GetComponent<SpriteRenderer>().material.color = colors[i];
-        clone.GetComponent<ingredientProperties>().color = colorNames[i];*/
     }
 
     public void updateText(Dictionary<string, int> collectedIngredients)
     {
         bool enterNextStep = false;
         bool fail = false;
-        if (step >= numSteps)
+        if (step > numSteps)
         {
-            currentStates.text = "Congratulation! You have a " + badTasteIndex.ToString() + "-level bad taste meal!";
+            currentStates.text = "Congratulations! You have a " + badTasteIndex.ToString() + "-level bad taste meal!";
+            Time.timeScale = 0;
+            return;
+            // end the game - go to ending screen(?)
         }
         if (step == 1)
         {
@@ -143,14 +175,20 @@ public class GameManager : MonoBehaviour
                 default:
                     break;
             }
-        }
+        }                                    
         
         if (enterNextStep)
         {
-            failTimesText.text = "Entering the next step, press Enter to continue!";
+            failTimesText.text = "Press Enter to start the next step!";
             step += 1;
             collectedIngredients = new Dictionary<string, int>();
+            player.GetComponent<getIngredient>().resetIngredients();
             Time.timeScale = 0;
+
+            // update recipe progress image
+            recipe_progress.sprite = progress[progress_index];
+            progress_index += 1;
+
         }
         if (fail)
         {
@@ -158,17 +196,25 @@ public class GameManager : MonoBehaviour
             player.GetComponent<getIngredient>().resetIngredients();
             failTimesText.text = "Fails: " + failTimes.ToString() + " times";
         }
-        stepText.text = "Step: " + step.ToString();
+        stepText.text = "Step " + step.ToString();
 
-        currentStates.text = "Colledted:";
-        foreach (KeyValuePair<string, int> kvp in collectedIngredients)
+        // update collected ingredients
+        currentStates.text = "Collected: \n";
+        List<string> collected_keys_sorted = new List<string>(collectedIngredients.Keys);
+        collected_keys_sorted.Sort();
+        foreach (string key in collected_keys_sorted)
         {
-            currentStates.text += (kvp.Key + ": " + kvp.Value.ToString() + " , ");
+            currentStates.text += (key + ": " + collectedIngredients[key] + " , ");
         }
-        currentStepRecipe.text = "Need:";
-        foreach (KeyValuePair<string, int> kvp in recipe[step-1])
+
+        // update recipe ingredients
+        currentStepRecipe.text = "Need: \n";
+        List<string> recipe_keys_sorted = new List<string>(recipe[step - 1].Keys);
+        recipe_keys_sorted.Sort();
+        //foreach (KeyValuePair<string, int> kvp in recipe[step-1])
+        foreach (string key in recipe_keys_sorted)
         {
-            currentStepRecipe.text += (kvp.Key + ": " + (kvp.Value*ratio).ToString() + " , ");
+            currentStepRecipe.text += (key + ": " + (recipe[step - 1][key]*ratio).ToString() + " , ");
         }
     }
 
