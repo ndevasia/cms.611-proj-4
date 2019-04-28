@@ -22,6 +22,13 @@ public class GameManager : MonoBehaviour
     int badTasteIndex = 0;
 
     public Sprite[] ingredientSprite;
+    Dictionary<string, Sprite> ingredientLookup = new Dictionary<string, Sprite>();
+    Tuple<string, string>[] combinedTypes = {
+        Tuple.Create("butter","sugar"),
+        Tuple.Create("sugar", "flour"),
+        Tuple.Create("butter", "flour"),
+        Tuple.Create("parsley", "sugar"),
+    };
 
     public Text failTimesText;
     int failTimes = 0;
@@ -83,6 +90,12 @@ public class GameManager : MonoBehaviour
         ingredient = sources[0].clip;
         wrongIng = sources[1].clip;
         stageWin = sources[2].clip;
+
+        // generate ingredient lookup dictionary <name, Sprite>
+        foreach (Sprite sp in ingredientSprite)
+        {
+            ingredientLookup[sp.name] = sp;
+        }
     }
 
     // Update is called once per frame
@@ -162,6 +175,23 @@ public class GameManager : MonoBehaviour
             clone.GetComponent<SpriteRenderer>().sprite = ingredientSprite[ingredientIndex];
         }
         Debug.Log("create an ingredient:" + clone.name.ToString());
+    }
+
+    public void createCombinedIngredient(Vector3 pos, string ingredient1, string ingredient2)
+    {
+        // generates two Ingredient objects on top of each other
+        // ingredient1 and ingredient2 are the names of the sprites (ingredients)
+        GameObject clone1;
+        clone1 = Instantiate(Ingredient, pos, Quaternion.identity);
+
+        clone1.GetComponent<SpriteRenderer>().sprite = ingredientLookup[ingredient1];
+
+        GameObject clone2;
+        clone2 = Instantiate(Ingredient, pos, Quaternion.identity);
+
+        clone2.GetComponent<SpriteRenderer>().sprite = ingredientLookup[ingredient2];
+
+        Debug.Log("create a combined ingredient:" + clone1.name.ToString() + ", " + clone2.name.ToString());
     }
 
     public void updateText(Dictionary<string, int> collectedIngredients)
