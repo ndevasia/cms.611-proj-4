@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     };
 
     public Text failTimesText;
+    public Text overCollectedText;
     int failTimes = 0;
     int overCollectedTimes = 0;
 
@@ -257,11 +258,21 @@ public class GameManager : MonoBehaviour
             collectedIngredients_ = new Dictionary<string, int>();
             player.GetComponent<getIngredient>().resetIngredients();
             failTimesText.text = "Fails: " + failTimes.ToString() + " times";
+            
         }
         else
         {
-            audio.PlayOneShot(ingredient);
+            if (overCollected)
+            {
+                audio.PlayOneShot(wrongIng);
+                overCollectedText.text = "Overcollected: " + overCollectedTimes.ToString() + " times";
+            }
+            else
+            {
+                audio.PlayOneShot(ingredient);
+            }
         }
+        
 
         stepText.text = "Step " + step.ToString();
 
@@ -384,6 +395,10 @@ public class GameManager : MonoBehaviour
                 if (collectedIngredients[name] > currentRecipe[name]*ratio)
                 {
                     collectedTable[i].color = Color.red;
+                }
+                else
+                {
+                    collectedTable[i].color = Color.black;
                 }
             }
             else
