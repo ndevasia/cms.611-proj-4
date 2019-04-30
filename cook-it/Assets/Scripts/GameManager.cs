@@ -24,10 +24,9 @@ public class GameManager : MonoBehaviour
     public Sprite[] ingredientSprite;
     Dictionary<string, Sprite> ingredientLookup = new Dictionary<string, Sprite>();
     Tuple<string, string>[] combinedTypes = {
-        Tuple.Create("butter","sugar"),
-        Tuple.Create("sugar", "flour"),
-        Tuple.Create("butter", "flour"),
-        Tuple.Create("parsley", "sugar"),
+        Tuple.Create("sugar","butter"),
+        Tuple.Create("flour", "butter"),
+        Tuple.Create("water", "flour"),
     };
 
     public Text failTimesText;
@@ -76,7 +75,7 @@ public class GameManager : MonoBehaviour
         //hardcode the recipe
         recipe[0] = new Dictionary<string, int> { { "flour", 4 }, { "sugar", 2 }, { "butter", 1 } };
         recipe[1] = new Dictionary<string, int> { { "oil", 3 }, { "heat", 2 } };
-        recipe[2] = new Dictionary<string, int> { { "parsley", 1 }, { "sugar", 2 } };
+        recipe[2] = new Dictionary<string, int> { { "frosting", 1 }, { "sugar", 2 } };
         numSteps = recipe.Count;
         updateText(collectedIngredients);
         /*currentStepRecipe.text = "Need:\n";
@@ -124,10 +123,19 @@ public class GameManager : MonoBehaviour
                 //pos = new Vector3(i_x + 0.5f, 5, 0);
                 if (UnityEngine.Random.Range(0, 100) < secondGenRand * 100)
                 {
+                    // random any ingredient
                     createIngredient(pos);
+                }
+                else if (UnityEngine.Random.Range(0, 100) < secondGenRand * 100 * 2)
+                {
+                    // random combo ingredient
+                    Tuple<string, string> combo = combinedTypes[UnityEngine.Random.Range(0, combinedTypes.Length - 1)];
+                    createCombinedIngredient(pos, combo.Item1, combo.Item2);
+                    
                 }
                 else
                 {
+                    // random in-step ingredient
                     createIngredient(pos, true);
                 }
             }
@@ -146,7 +154,7 @@ public class GameManager : MonoBehaviour
             if (step > numSteps)
             {
                 // return to scene 2 (menu screen)
-                UnityEngine.SceneManagement.SceneManager.LoadScene(2);
+                UnityEngine.SceneManagement.SceneManager.LoadScene("menuScene");
             }
             //clean the collected time and update the steps;
             Time.timeScale = 1;
