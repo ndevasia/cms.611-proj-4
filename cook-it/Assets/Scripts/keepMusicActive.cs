@@ -22,12 +22,7 @@ public class keepMusicActive : MonoBehaviour
         // Keep music active no matter which scene we are in
         GameObject[] objs = GameObject.FindGameObjectsWithTag("Music");
         if (objs.Length > 1)
-        {
-            Destroy(objs[0].gameObject);
-            //Debug.Log("cleared obj: " + objs.Length);
-            //Debug.Log(objs[0].gameObject);
-            //Debug.Log(objs[1].gameObject);
-        }
+            Destroy(this.gameObject);
 
         DontDestroyOnLoad(this.gameObject);
 
