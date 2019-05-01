@@ -5,12 +5,18 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/splashScene.unity
     guid: 851c11bb6ce694954b415e95813d3608
+  - enabled: 1
+    path: Assets/Scenes/TutorialScene-1.unity
+    guid: a49ba983c2b73514fb4eb7e80d47a3d8
+  - enabled: 1
+    path: Assets/Scenes/TutorialScene-2.unity
+    guid: 0a8bc5115954f1f40b31bf6d8d82e09f
+  - enabled: 1
+    path: Assets/Scenes/TutorialScene-3.unity
+    guid: c1c9dd60b5c0a394584ba2ba17af4058
   - enabled: 1
     path: Assets/Scenes/instructionsScene.unity
     guid: 5876cd59306134c8a992b07f461109d7
@@ -23,7 +29,37 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: e05ebd700a3fe374ba3a9a8acb390731
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Scenes/TutorialScene-4.unity
+    guid: bd2de18a3ef35074a8ce19efdb989097
+  - enabled: 1
+    path: Assets/Scenes/TutorialScene-7.unity
+    guid: 60d1559564aa0df4f88e060dc2c4acd4
+  - enabled: 1
+    path: Assets/Scenes/TutorialScene-6.unity
+    guid: db37150cd0939804db54bb0c9dc46714
+  - enabled: 1
+    path: Assets/Scenes/TutorialScene-11.unity
+    guid: 6fe87c1a977ad8349973a3938b021549
+  - enabled: 1
+    path: Assets/Scenes/TutorialScene-8.unity
+    guid: 483e8fe53c71b95458ad427481782242
+  - enabled: 1
+    path: Assets/Scenes/TutorialScene-5.unity
+    guid: 42bbb7d85096f03418aacc08e244d8ad
+  - enabled: 1
+    path: Assets/Scenes/TutorialScene-9.unity
+    guid: 7f36679cca1d35c4285e8401a1fb4f54
+  - enabled: 1
+    path: Assets/Scenes/TutorialScene-10.unity
+    guid: 831e524b453350640a9b1bbbba37cbc2
+  - enabled: 1
+    path: Assets/Scenes/TutorialScene-3.unity
+    guid: c1c9dd60b5c0a394584ba2ba17af4058
+  - enabled: 1
+    path: Assets/Scenes/TutorialScene-1.unity
+    guid: a49ba983c2b73514fb4eb7e80d47a3d8
+  - enabled: 1
+    path: Assets/Scenes/TutorialScene-2.unity
+    guid: 0a8bc5115954f1f40b31bf6d8d82e09f
   m_configObjects: {}

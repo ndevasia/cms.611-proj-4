@@ -22,9 +22,17 @@ public class GameManager : MonoBehaviour
     int badTasteIndex = 0;
 
     public Sprite[] ingredientSprite;
+    Dictionary<string, Sprite> ingredientLookup = new Dictionary<string, Sprite>();
+    Tuple<string, string>[] combinedTypes = {
+        Tuple.Create("sugar","butter"),
+        Tuple.Create("flour", "butter"),
+        Tuple.Create("water", "flour"),
+    };
 
     public Text failTimesText;
+    public Text overCollectedText;
     int failTimes = 0;
+    int overCollectedTimes = 0;
 
     public Text stepText;
     int step = 1;
@@ -38,6 +46,10 @@ public class GameManager : MonoBehaviour
 
     public GameObject leftWall;
     public GameObject rightWall;
+
+    public Image[] ingredientTable;
+    public Text[] needTable;
+    public Text[] collectedTable;
 
     public AudioClip ingredient;
     public AudioClip wrongIng;
@@ -63,7 +75,7 @@ public class GameManager : MonoBehaviour
         //hardcode the recipe
         recipe[0] = new Dictionary<string, int> { { "flour", 4 }, { "sugar", 2 }, { "butter", 1 } };
         recipe[1] = new Dictionary<string, int> { { "oil", 3 }, { "heat", 2 } };
-        recipe[2] = new Dictionary<string, int> { { "parsley", 1 }, { "sugar", 2 } };
+        recipe[2] = new Dictionary<string, int> { { "frosting", 1 }, { "sugar", 2 } };
         numSteps = recipe.Count;
         updateText(collectedIngredients);
         /*currentStepRecipe.text = "Need:\n";
@@ -78,6 +90,12 @@ public class GameManager : MonoBehaviour
         ingredient = sources[0].clip;
         wrongIng = sources[1].clip;
         stageWin = sources[2].clip;
+
+        // generate ingredient lookup dictionary <name, Sprite>
+        foreach (Sprite sp in ingredientSprite)
+        {
+            ingredientLookup[sp.name] = sp;
+        }
     }
 
     // Update is called once per frame
@@ -105,10 +123,19 @@ public class GameManager : MonoBehaviour
                 //pos = new Vector3(i_x + 0.5f, 5, 0);
                 if (UnityEngine.Random.Range(0, 100) < secondGenRand * 100)
                 {
+                    // random any ingredient
                     createIngredient(pos);
+                }
+                else if (UnityEngine.Random.Range(0, 100) < secondGenRand * 100 * 2)
+                {
+                    // random combo ingredient
+                    Tuple<string, string> combo = combinedTypes[UnityEngine.Random.Range(0, combinedTypes.Length - 1)];
+                    createCombinedIngredient(pos, combo.Item1, combo.Item2);
+                    
                 }
                 else
                 {
+                    // random in-step ingredient
                     createIngredient(pos, true);
                 }
             }
@@ -127,7 +154,7 @@ public class GameManager : MonoBehaviour
             if (step > numSteps)
             {
                 // return to scene 2 (menu screen)
-                UnityEngine.SceneManagement.SceneManager.LoadScene(2);
+                UnityEngine.SceneManagement.SceneManager.LoadScene("menuScene");
             }
             //clean the collected time and update the steps;
             Time.timeScale = 1;
@@ -159,10 +186,30 @@ public class GameManager : MonoBehaviour
         Debug.Log("create an ingredient:" + clone.name.ToString());
     }
 
+    public void createCombinedIngredient(Vector3 pos, string ingredient1, string ingredient2)
+    {
+        // generates two Ingredient objects on top of each other
+        // ingredient1 and ingredient2 are the names of the sprites (ingredients)
+        GameObject clone1;
+        clone1 = Instantiate(Ingredient, pos, Quaternion.identity);
+
+        clone1.GetComponent<SpriteRenderer>().sprite = ingredientLookup[ingredient1];
+
+        GameObject clone2;
+        clone2 = Instantiate(Ingredient, pos, Quaternion.identity);
+
+        clone2.GetComponent<SpriteRenderer>().sprite = ingredientLookup[ingredient2];
+
+        Debug.Log("create a combined ingredient:" + clone1.name.ToString() + ", " + clone2.name.ToString());
+    }
+
     public void updateText(Dictionary<string, int> collectedIngredients)
     {
+        Debug.Log("1");
+        Dictionary<string, int> collectedIngredients_ = collectedIngredients;
         bool enterNextStep = false;
         bool fail = false;
+        bool overCollected = false;
         if (step > numSteps)
         {
             currentStates.text = "Congratulations! You have a " + badTasteIndex.ToString() + "-level bad taste meal!";
@@ -170,7 +217,7 @@ public class GameManager : MonoBehaviour
             return;
             // end the game - go to ending screen(?)
         }
-        switch (CompareIngredient(collectedIngredients,recipe,ratio,step)){
+        switch (CompareIngredient(collectedIngredients_,recipe,ratio,step)){
             case 0: break;
             case 1: 
                 fail = true;
@@ -186,7 +233,8 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     //fail = true;
-                    failTimes += 1;
+                    overCollected = true;
+                    overCollectedTimes += 1;
                 }
                 break;
             case 3:
@@ -203,7 +251,7 @@ public class GameManager : MonoBehaviour
             audio.PlayOneShot(stageWin);
             failTimesText.text = "Press Enter to start the next step!";
             step += 1;
-            collectedIngredients = new Dictionary<string, int>();
+            collectedIngredients_ = new Dictionary<string, int>();
             player.GetComponent<getIngredient>().resetIngredients();
             Time.timeScale = 0;
 
@@ -215,24 +263,34 @@ public class GameManager : MonoBehaviour
         if (fail)
         {
             audio.PlayOneShot(wrongIng);
-            collectedIngredients = new Dictionary<string, int>();
+            collectedIngredients_ = new Dictionary<string, int>();
             player.GetComponent<getIngredient>().resetIngredients();
             failTimesText.text = "Fails: " + failTimes.ToString() + " times";
+            
         }
         else
         {
-            audio.PlayOneShot(ingredient);
+            if (overCollected)
+            {
+                audio.PlayOneShot(wrongIng);
+                overCollectedText.text = "Overcollected: " + overCollectedTimes.ToString() + " times";
+            }
+            else
+            {
+                audio.PlayOneShot(ingredient);
+            }
         }
+        
 
         stepText.text = "Step " + step.ToString();
 
         // update collected ingredients
         currentStates.text = "Collected: \n";
-        List<string> collected_keys_sorted = new List<string>(collectedIngredients.Keys);
+        List<string> collected_keys_sorted = new List<string>(collectedIngredients_.Keys);
         collected_keys_sorted.Sort();
         foreach (string key in collected_keys_sorted)
         {
-            currentStates.text += (key + ": " + collectedIngredients[key] + " , ");
+            currentStates.text += (key + ": " + collectedIngredients_[key] + " , ");
         }
 
         // update recipe ingredients
@@ -244,6 +302,8 @@ public class GameManager : MonoBehaviour
         {
             currentStepRecipe.text += (key + ": " + (recipe[step - 1][key]*ratio).ToString() + " , ");
         }
+
+        updateIngredientTable(collectedIngredients_, recipe, step, ratio);
     }
 
     private int CompareIngredient(Dictionary<string, int> collectedIngredients, Dictionary<int, Dictionary<string, int>> recipe, int ratio, int step)
@@ -324,5 +384,49 @@ public class GameManager : MonoBehaviour
             }
         }
         return -1;//error code
+    }
+
+    public void updateIngredientTable(Dictionary<string, int> collectedIngredients, Dictionary<int, Dictionary<string, int>> recipe,int step , int ratio)
+    {
+       
+        Dictionary<string, int> currentRecipe = recipe[step - 1];
+        List<string> recipe_keys_sorted = new List<string>(currentRecipe.Keys);
+        recipe_keys_sorted.Sort();
+        for (int i=0; i < recipe_keys_sorted.Count; i++)
+        {
+            string name = recipe_keys_sorted[i];
+            ingredientTable[i].sprite = Array.Find(ingredientSprite, x => x.name.ToString() == name);
+            needTable[i].text = (ratio*currentRecipe[name]).ToString();
+            if (collectedIngredients.ContainsKey(name))
+            {
+                collectedTable[i].text = collectedIngredients[name].ToString();
+                if (collectedIngredients[name] > currentRecipe[name]*ratio)
+                {
+                    collectedTable[i].color = Color.red;
+                }
+                else
+                {
+                    collectedTable[i].color = Color.black;
+                }
+            }
+            else
+            {
+                collectedTable[i].text = "";
+            }
+        }
+        int numIngredients = recipe_keys_sorted.Count;
+        if (numIngredients < 3)
+        {
+            for(int i = numIngredients; i < 3; i++)
+            {
+                Color C = ingredientTable[i].color;
+                C.a = 0;
+                ingredientTable[i].color = C;
+                needTable[i].text = "";
+                collectedTable[i].text = "";
+            }
+        }
+        
+ 
     }
 }

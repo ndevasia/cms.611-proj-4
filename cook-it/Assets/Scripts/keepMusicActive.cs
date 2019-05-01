@@ -4,19 +4,6 @@ using UnityEngine;
 
 public class keepMusicActive : MonoBehaviour
 {
-    private AudioClip click;
-    private AudioClip hover;
-    private AudioSource audio;
-
-    void start()
-    {
-        AudioSource[] sources = GetComponents<AudioSource>();
-        audio = sources[0];
-
-        click = sources[0].clip;
-        hover = sources[1].clip;
-    }
-
     private void Awake()
     {
         // Keep music active no matter which scene we are in
@@ -25,21 +12,5 @@ public class keepMusicActive : MonoBehaviour
             Destroy(this.gameObject);
 
         DontDestroyOnLoad(this.gameObject);
-
-        AudioSource[] sources = GetComponents<AudioSource>();
-        audio = sources[1];
-
-        click = sources[1].clip;
-        hover = sources[2].clip;
-    }
-
-    public void hoverSound()
-    {
-        audio.PlayOneShot(hover);
-    }
-
-    public void clickSound()
-    {
-        audio.PlayOneShot(click);
     }
 }
