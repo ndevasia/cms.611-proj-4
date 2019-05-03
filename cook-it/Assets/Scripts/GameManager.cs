@@ -26,8 +26,11 @@ public class GameManager : MonoBehaviour
     Tuple<string, string>[] combinedTypes = {
         Tuple.Create("sugar","butter"),
         Tuple.Create("flour", "butter"),
+        Tuple.Create("flour", "sugar"),
         Tuple.Create("water", "flour"),
     };
+    public Sprite[] comboSprite;
+    public GameObject ingredient_image_only;
 
     public Text failTimesText;
     public Text overCollectedText;
@@ -43,6 +46,9 @@ public class GameManager : MonoBehaviour
     public Image recipe_progress;
     public Sprite[] progress;
     int progress_index = 0;
+
+    public Image progress_pause;
+    public Sprite[] progress_pause_sprites;
 
     public GameObject leftWall;
     public GameObject rightWall;
@@ -96,6 +102,15 @@ public class GameManager : MonoBehaviour
         {
             ingredientLookup[sp.name] = sp;
         }
+        foreach (Sprite sp in comboSprite)
+        {
+            ingredientLookup[sp.name] = sp;
+        }
+
+        // set up pause images (in between each step)
+        progress_pause.enabled = false;
+        progress_pause.sprite = progress_pause_sprites[progress_index];
+
     }
 
     // Update is called once per frame
@@ -160,6 +175,9 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 1;
             // [when pressing enter to start game, replace with correct text]
             failTimesText.text = "Fails: " + failTimes.ToString() + " times";
+            // make pause image invisible again
+            progress_pause.enabled = false;
+            progress_pause.sprite = progress_pause_sprites[progress_index];
         }
 
 
@@ -174,7 +192,7 @@ public class GameManager : MonoBehaviour
         int ingredientIndex;
         if (fromRecipe)
         {
-            int wantedInd = UnityEngine.Random.Range(0,recipe[step - 1].Count - 1);
+            int wantedInd = UnityEngine.Random.Range(0,recipe[step - 1].Count);
             string wantedName = new List<string>(recipe[step - 1].Keys)[wantedInd];
             clone.GetComponent<SpriteRenderer>().sprite = Array.Find(ingredientSprite, x => x.name.ToString() == wantedName);
         }
@@ -183,7 +201,7 @@ public class GameManager : MonoBehaviour
             ingredientIndex = UnityEngine.Random.Range(0, ingredientSprite.Length);
             clone.GetComponent<SpriteRenderer>().sprite = ingredientSprite[ingredientIndex];
         }
-        Debug.Log("create an ingredient:" + clone.name.ToString());
+        Debug.Log("create an ingredient:" + clone.GetComponent<SpriteRenderer>().sprite.name);
     }
 
     public void createCombinedIngredient(Vector3 pos, string ingredient1, string ingredient2)
@@ -194,13 +212,23 @@ public class GameManager : MonoBehaviour
         clone1 = Instantiate(Ingredient, pos, Quaternion.identity);
 
         clone1.GetComponent<SpriteRenderer>().sprite = ingredientLookup[ingredient1];
+        clone1.GetComponent<SpriteRenderer>().enabled = false; // make it invisible
 
         GameObject clone2;
         clone2 = Instantiate(Ingredient, pos, Quaternion.identity);
 
         clone2.GetComponent<SpriteRenderer>().sprite = ingredientLookup[ingredient2];
+        clone2.GetComponent<SpriteRenderer>().enabled = false; // make it invisible
 
-        Debug.Log("create a combined ingredient:" + clone1.name.ToString() + ", " + clone2.name.ToString());
+        // put new combined-sprite image on top
+        GameObject topclone;
+        topclone = Instantiate(ingredient_image_only, pos, Quaternion.identity);
+        topclone.GetComponent<SpriteRenderer>().sprite = ingredientLookup[ingredient1+"-"+ingredient2];
+        topclone.transform.SetParent(clone1.transform);
+        Debug.Log("combined " + ingredientLookup[ingredient1 + "-" + ingredient2].name);
+        Debug.Log("create a combined ingredient:" 
+                    + clone1.GetComponent<SpriteRenderer>().sprite.name
+                    + ", " + clone2.GetComponent<SpriteRenderer>().sprite.name);
     }
 
     public void updateText(Dictionary<string, int> collectedIngredients)
@@ -212,7 +240,7 @@ public class GameManager : MonoBehaviour
         bool overCollected = false;
         if (step > numSteps)
         {
-            currentStates.text = "Congratulations! You have a " + badTasteIndex.ToString() + "-level bad taste meal!";
+            currentStates.text = "Congratulations! You have completed the cookies with a score of " + (100-badTasteIndex).ToString() + ".";
             Time.timeScale = 0;
             return;
             // end the game - go to ending screen(?)
@@ -256,8 +284,10 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 0;
 
             // update recipe progress image
-            recipe_progress.sprite = progress[progress_index];
+            //recipe_progress.sprite = progress[progress_index];
             progress_index += 1;
+            progress_pause.enabled = true; // make visible
+            progress_pause.sprite = progress_pause_sprites[progress_index];
 
         }
         if (fail)
