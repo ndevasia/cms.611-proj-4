@@ -12,6 +12,6 @@ public class ingredientProperties : MonoBehaviour
 
     private void Start()
     {
-        ingredientName = GetComponent<SpriteRenderer>().sprite.name;
+        ingredientName = this.GetComponent<SpriteRenderer>().sprite.name;
     }
 }
