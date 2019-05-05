@@ -62,12 +62,15 @@ public class GameManager : MonoBehaviour
     public AudioClip stageWin;
     public AudioSource audio;
 
+    Animator playerAnimator;
+
     // Start is called before the first frame update
     void Start()
     {
         // find the Player
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         player = players[0];
+        playerAnimator = player.GetComponent<Animator>();
 
         // pause the game, press enter when ready to start
         failTimesText.text = "Press Enter to start the game!";
@@ -83,7 +86,7 @@ public class GameManager : MonoBehaviour
         recipe[1] = new Dictionary<string, int> { { "oil", 3 }, { "heat", 2 } };
         recipe[2] = new Dictionary<string, int> { { "frosting", 1 }, { "sugar", 2 } };
         numSteps = recipe.Count;
-        updateText(collectedIngredients);
+        updateText(collectedIngredients,0);
         /*currentStepRecipe.text = "Need:\n";
         foreach (KeyValuePair<string, int> kvp in recipe[step - 1])
         {
@@ -161,7 +164,7 @@ public class GameManager : MonoBehaviour
             //clean the collected time and update the failTimes;
             failTimes += 1;
             failTimesText.text = "Fails: " + failTimes.ToString() + " times";
-            player.GetComponent<getIngredient>().resetIngredients();
+            resetIngredients();
         }
 
         if (Input.GetKeyDown(KeyCode.Return))
@@ -230,11 +233,20 @@ public class GameManager : MonoBehaviour
                     + clone1.GetComponent<SpriteRenderer>().sprite.name
                     + ", " + clone2.GetComponent<SpriteRenderer>().sprite.name);
     }
+    public void addIngredient(string addIngredient)
+    {
+        /*This function will read one ingredient and add that to collected ingredients
+         *addIngredient is the name of the newly catched ingredient
+         */
+        int compareCode;
+        //the new ingredient will also be added to collected in this function
+        compareCode = CompareAddedIngredient(collectedIngredients, recipe, ratio, step, addIngredient); 
+        updateText(collectedIngredients,compareCode);
+    }
 
-    public void updateText(Dictionary<string, int> collectedIngredients)
+    public void updateText(Dictionary<string, int> collectedIngredients, int compareCode)
     {
         Debug.Log("1");
-        Dictionary<string, int> collectedIngredients_ = collectedIngredients;
         bool enterNextStep = false;
         bool fail = false;
         bool overCollected = false;
@@ -245,7 +257,7 @@ public class GameManager : MonoBehaviour
             return;
             // end the game - go to ending screen(?)
         }
-        switch (CompareIngredient(collectedIngredients_,recipe,ratio,step)){
+        switch (compareCode){
             case 0: break;
             case 1: 
                 fail = true;
@@ -279,8 +291,7 @@ public class GameManager : MonoBehaviour
             audio.PlayOneShot(stageWin);
             failTimesText.text = "Press Enter to start the next step!";
             step += 1;
-            collectedIngredients_ = new Dictionary<string, int>();
-            player.GetComponent<getIngredient>().resetIngredients();
+            resetIngredients();
             Time.timeScale = 0;
 
             // update recipe progress image
@@ -293,17 +304,18 @@ public class GameManager : MonoBehaviour
         if (fail)
         {
             audio.PlayOneShot(wrongIng);
-            collectedIngredients_ = new Dictionary<string, int>();
-            player.GetComponent<getIngredient>().resetIngredients();
-            failTimesText.text = "Fails: " + failTimes.ToString() + " times";
+            resetIngredients();
+            playerAnimator.SetTrigger("wrongCatch");
+            //failTimesText.text = "Fails: " + failTimes.ToString() + " times";
             
         }
         else
         {
             if (overCollected)
             {
+                playerAnimator.SetTrigger("wrongCatch");
                 audio.PlayOneShot(wrongIng);
-                overCollectedText.text = "Overcollected: " + overCollectedTimes.ToString() + " times";
+                //overCollectedText.text = "Overcollected: " + overCollectedTimes.ToString() + " times";
             }
             else
             {
@@ -314,109 +326,92 @@ public class GameManager : MonoBehaviour
 
         stepText.text = "Step " + step.ToString();
 
-        // update collected ingredients
-        currentStates.text = "Collected: \n";
-        List<string> collected_keys_sorted = new List<string>(collectedIngredients_.Keys);
-        collected_keys_sorted.Sort();
-        foreach (string key in collected_keys_sorted)
-        {
-            currentStates.text += (key + ": " + collectedIngredients_[key] + " , ");
-        }
+        //// update collected ingredients
+        //currentStates.text = "Collected: \n";
+        //List<string> collected_keys_sorted = new List<string>(collectedIngredients_.Keys);
+        //collected_keys_sorted.Sort();
+        //foreach (string key in collected_keys_sorted)
+        //{
+        //    currentStates.text += (key + ": " + collectedIngredients_[key] + " , ");
+        //}
 
-        // update recipe ingredients
-        currentStepRecipe.text = "Need: \n";
-        List<string> recipe_keys_sorted = new List<string>(recipe[step - 1].Keys);
-        recipe_keys_sorted.Sort();
-        //foreach (KeyValuePair<string, int> kvp in recipe[step-1])
-        foreach (string key in recipe_keys_sorted)
-        {
-            currentStepRecipe.text += (key + ": " + (recipe[step - 1][key]*ratio).ToString() + " , ");
-        }
-
-        updateIngredientTable(collectedIngredients_, recipe, step, ratio);
+        //// update recipe ingredients
+        //currentStepRecipe.text = "Need: \n";
+        //List<string> recipe_keys_sorted = new List<string>(recipe[step - 1].Keys);
+        //recipe_keys_sorted.Sort();
+        ////foreach (KeyValuePair<string, int> kvp in recipe[step-1])
+        //foreach (string key in recipe_keys_sorted)
+        //{
+        //    currentStepRecipe.text += (key + ": " + (recipe[step - 1][key]*ratio).ToString() + " , ");
+        //}
+        updateIngredientTable(recipe, step, ratio);
     }
 
-    private int CompareIngredient(Dictionary<string, int> collectedIngredients, Dictionary<int, Dictionary<string, int>> recipe, int ratio, int step)
-    {   /*This function takes the collected ingredients, recipe, ratio and current step to compare 
-        return value: 0--the collected ingredients are in the recipe and do not exceed the required quantity (recipe[step]*ratio)
-                      1--the collected ingredients contain something does not belong to the recipe at this step
-                      2--the colllected ingredients contain the right ingredients but some(but not all) of them  exceed the required quantity in this step
-                      3--the collected ingredients contain all the right ingredients and all of them equal or exceed the required quantity
+    private int CompareAddedIngredient(Dictionary<string, int> collectedIngredients_, Dictionary<int, Dictionary<string, int>> recipe, int ratio, int step, string addIngredient)
+    {   /*This function takes the collected ingredients, recipe, ratio, current step and new added ingredient to compare 
+        Assume collectedIngredient(without new added one) contains nothing outside of the recipe[step-1]
+        return value: 0--the new collected ingredients are in the recipe and do not exceed the required quantity (recipe[step]*ratio)
+                      1--the new collected ingredients contain something does not belong to the recipe at this step
+                      2--the new colllected ingredients contain the right ingredients but some(but not all) of them  exceed the required quantity in this step
+                      3--the new collected ingredients contain all the right ingredients and all of them equal or exceed the required quantity
          */
+        if (collectedIngredients_.ContainsKey(addIngredient))
+        {
+            collectedIngredients_[addIngredient] += 1;
+        }
+        else
+        {
+            collectedIngredients_[addIngredient] = 1;
+        }
+        collectedIngredients = collectedIngredients_;
         Dictionary<string, int> currentRecipe = recipe[step-1];
-        int numCollected = collectedIngredients.Count;
+
+        int numCollected = collectedIngredients_.Count; //just collect a new ingredient
         int numRequired = currentRecipe.Count;
         if (numCollected > numRequired)
         {
             return 1;
         }
 
-        bool exceed = false;
-        if (numCollected < numRequired)
+        //bool exceed = false;
+        if (numCollected <= numRequired)
         {
-            foreach (KeyValuePair<string, int> kvp in collectedIngredients)
+            //check whether new ingredient contains anything not in the recipe
+            if (currentRecipe.ContainsKey(addIngredient))
             {
-                //check whether contains anything not in the recipe
-                if (currentRecipe.ContainsKey(kvp.Key))
+                //check whether something exceed the required quantity
+                if (collectedIngredients_[addIngredient] > currentRecipe[addIngredient] * ratio)
                 {
-                    //check whether something exceed the required quantity
-                    if (kvp.Value > currentRecipe[kvp.Key] * ratio)
-                    {
-                        exceed = true;   
-                    }
+                    return 2; 
                 }
-                else
-                {
-                    return 1;
-                }
-            }
-            if (exceed)
-            {
-                return 2;
             }
             else
             {
-                return 0;
+                return 1;
             }
         }
 
         bool fulfilled = true;
         if (numCollected == numRequired)
         {
-            foreach (KeyValuePair<string, int> kvp in collectedIngredients)
+            foreach (KeyValuePair<string, int> kvp in collectedIngredients_)
             {
                 //check whether contains anything not in the recipe
-                if (currentRecipe.ContainsKey(kvp.Key))
+                //check whether something exceed the required quantity
+                if (kvp.Value < currentRecipe[kvp.Key] * ratio)
                 {
-                    //check whether something exceed the required quantity
-                    if (kvp.Value > currentRecipe[kvp.Key] * ratio)
-                    {
-                        exceed = true;
-                    }
-                    if (kvp.Value < currentRecipe[kvp.Key] * ratio)
-                    {
-                        fulfilled = false;
-                    }
+                    fulfilled = false;
                 }
-                else return 1;  
             }
             if (fulfilled)
             {
                 return 3;
             }
-            else
-            {
-                if (exceed)
-                {
-                    return 2;
-                }
-                else return 0;
-            }
         }
         return -1;//error code
     }
 
-    public void updateIngredientTable(Dictionary<string, int> collectedIngredients, Dictionary<int, Dictionary<string, int>> recipe,int step , int ratio)
+    public void updateIngredientTable(Dictionary<int, Dictionary<string, int>> recipe,int step , int ratio)
     {
        
         Dictionary<string, int> currentRecipe = recipe[step - 1];
@@ -456,7 +451,16 @@ public class GameManager : MonoBehaviour
                 collectedTable[i].text = "";
             }
         }
-        
- 
+    }
+
+    public void resetIngredients()
+    {
+        /*for (int i = 0; i < Data.numColors; i++)
+        {
+            numberColors[i] = 0;
+        }
+        FindObjectOfType<GameManager>().GetComponent<GameManager>().updateText(numberColors);*/
+        collectedIngredients = new Dictionary<string, int>();
+        //gm.GetComponent<GameManager>().updateText(collectedIngredients);
     }
 }

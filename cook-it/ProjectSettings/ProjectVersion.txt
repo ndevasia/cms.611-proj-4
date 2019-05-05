@@ -1,9 +1,2 @@
-<<<<<<< HEAD
-m_EditorVersion: 2018.3.6f1
-=======
-<<<<<<< HEAD
-m_EditorVersion: 2018.3.9f1
-=======
-m_EditorVersion: 2018.3.11f1
->>>>>>> af0bec1649832c073a91cd5b0eca1aa6252334d2
->>>>>>> 7db2340c9368be1c22996455f56890bf766498a8
+m_EditorVersion: 2019.1.1f1
+m_EditorVersionWithRevision: 2019.1.1f1 (fef62e97e63b)
