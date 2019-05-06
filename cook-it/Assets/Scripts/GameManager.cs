@@ -478,7 +478,14 @@ public class GameManager : MonoBehaviour
         {
             string name = recipe_keys_sorted[i];
             ingredientTable[i].sprite = Array.Find(ingredientSprite, x => x.name.ToString() == name);
-            needTable[i].text = (ratio*currentRecipe[name]).ToString();
+            if (ratio > 1)
+            {
+                needTable[i].text = currentRecipe[name].ToString() + "x" + ratio.ToString();
+            }
+            else
+            {
+                needTable[i].text = currentRecipe[name].ToString();
+            }
             if (collectedIngredients.ContainsKey(name))
             {
                 collectedTable[i].text = collectedIngredients[name].ToString();
