@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
     public AudioClip ingredient;
     public AudioClip wrongIng;
     public AudioClip stageWin;
+    public AudioClip stageDone;
     public AudioSource audio;
 
     Animator playerAnimator;
@@ -102,6 +103,7 @@ public class GameManager : MonoBehaviour
         ingredient = sources[0].clip;
         wrongIng = sources[1].clip;
         stageWin = sources[2].clip;
+        stageDone = sources[3].clip;
 
         // generate ingredient lookup dictionary <name, Sprite>
         foreach (Sprite sp in ingredientSprite)
@@ -346,9 +348,17 @@ public class GameManager : MonoBehaviour
         
         if (enterNextStep)
         {
-            audio.PlayOneShot(stageWin);
             failTimesText.text = "Press Enter to start the next step!";
             step += 1;
+
+            if (step > numSteps)
+            {
+                audio.PlayOneShot(stageDone);
+            }
+            else
+            {
+                audio.PlayOneShot(stageWin);
+            }
             resetIngredients();
             Time.timeScale = 0;
 
