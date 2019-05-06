@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,6 +21,9 @@ public class GameManager : MonoBehaviour
     int numSteps;
     int ratio = 1;
     int badTasteIndex = 0;
+
+    public static int level = 1;
+    public string[] levelInstructions;
 
     public Sprite[] ingredientSprite;
     Dictionary<string, Sprite> ingredientLookup = new Dictionary<string, Sprite>();
@@ -81,11 +85,10 @@ public class GameManager : MonoBehaviour
         Vector3 pos = new Vector3(0, 5, 0);
         //generate an ingredient and assign some properties to it
         createIngredient(pos);
-        
+
         //hardcode the recipe
-        recipe[0] = new Dictionary<string, int> { { "flour", 4 }, { "sugar", 2 }, { "butter", 1 } };
-        recipe[1] = new Dictionary<string, int> { { "oil", 3 }, { "heat", 2 } };
-        recipe[2] = new Dictionary<string, int> { { "frosting", 1 }, { "sugar", 2 } };
+        updateRecipe(level);
+
         numSteps = recipe.Count;
         updateText(collectedIngredients,0);
         /*currentStepRecipe.text = "Need:\n";
@@ -117,6 +120,30 @@ public class GameManager : MonoBehaviour
         progress_pause.sprite = progress_pause_sprites[progress_index];
 
     }
+
+    void updateRecipe(int level)
+    {
+        Debug.Log("update recipe");
+        switch (level)
+        {
+            case 1:
+                recipe[0] = new Dictionary<string, int> { { "flour", 4 }, { "sugar", 2 }, { "butter", 1 } };
+                recipe[1] = new Dictionary<string, int> { { "oil", 3 }, { "heat", 2 } };
+                recipe[2] = new Dictionary<string, int> { { "frosting", 1 }, { "sugar", 2 } };
+                break;
+            case 2:
+                recipe[0] = new Dictionary<string, int> { { "flour", 6 }, { "sugar", 1 }, { "egg", 2 } };
+                recipe[1] = new Dictionary<string, int> { { "heat", 3 }, { "butter", 4 } };
+                recipe[2] = new Dictionary<string, int> { { "honey", 1 }, { "butter", 2 } };
+                break;
+            case 3:
+                recipe[0] = new Dictionary<string, int> { { "flour", 3 }, { "sugar", 1 }, { "water", 2 } };
+                recipe[1] = new Dictionary<string, int> { { "heat", 3 }, { "oil", 4 } };
+                recipe[2] = new Dictionary<string, int> { { "honey", 3 }, { "sugar", 1 } };
+                break;
+        }
+    }
+
 
     // Update is called once per frame
     void Update()
@@ -150,6 +177,7 @@ public class GameManager : MonoBehaviour
                 {
                     // random combo ingredient
                     Tuple<string, string> combo = combinedTypes[UnityEngine.Random.Range(0, combinedTypes.Length - 1)];
+                    Debug.Log("combo:"+combo.ToString());
                     createCombinedIngredient(pos, combo.Item1, combo.Item2);
                     
                 }
@@ -173,8 +201,20 @@ public class GameManager : MonoBehaviour
         {
             if (step > numSteps)
             {
+                Debug.Log("Should jump to another scene");
+                if (level < levelInstructions.Length)
+                {
+                    //load next level instruction scene
+                    initialParameters(false);
+                    SceneManager.LoadScene(levelInstructions[level-1]);
+                }
+                else
+                {
+                    initialParameters(true);
+                    SceneManager.LoadScene("menuScene");
+                }
                 // return to scene 2 (menu screen)
-                UnityEngine.SceneManagement.SceneManager.LoadScene("menuScene");
+                //UnityEngine.SceneManagement.SceneManager.LoadScene("menuScene");
             }
             //clean the collected time and update the steps;
             Time.timeScale = 1;
@@ -186,6 +226,23 @@ public class GameManager : MonoBehaviour
         }
 
 
+    }
+    public void initialParameters(bool initialLevel)
+    {
+        //initialize parameters before entering a new level
+        if (initialLevel)
+        {
+            level = 1;
+        }
+        else
+        {
+            level += 1;
+        }
+        updateRecipe(level);
+        step = 1;
+        ratio = 1;
+        failTimes = 0;
+        overCollectedTimes=0;
     }
 
     public void createIngredient(Vector3 pos, bool fromRecipe = false)
@@ -248,7 +305,7 @@ public class GameManager : MonoBehaviour
 
     public void updateText(Dictionary<string, int> collectedIngredients, int compareCode)
     {
-        Debug.Log("1");
+        //Debug.Log("1");
         bool enterNextStep = false;
         bool fail = false;
         bool overCollected = false;
@@ -256,6 +313,7 @@ public class GameManager : MonoBehaviour
         {
             currentStates.text = "Congratulations! You have completed the cookies with a score of " + (100-badTasteIndex).ToString() + ".";
             Time.timeScale = 0;
+            
             return;
             // end the game - go to ending screen(?)
         }
@@ -431,7 +489,14 @@ public class GameManager : MonoBehaviour
         {
             string name = recipe_keys_sorted[i];
             ingredientTable[i].sprite = Array.Find(ingredientSprite, x => x.name.ToString() == name);
-            needTable[i].text = (ratio*currentRecipe[name]).ToString();
+            if (ratio > 1)
+            {
+                needTable[i].text = currentRecipe[name].ToString() + "x" + ratio.ToString();
+            }
+            else
+            {
+                needTable[i].text = currentRecipe[name].ToString();
+            }
             if (collectedIngredients.ContainsKey(name))
             {
                 collectedTable[i].text = collectedIngredients[name].ToString();
