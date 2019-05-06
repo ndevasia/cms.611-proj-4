@@ -1176,7 +1176,7 @@ MonoBehaviour:
   comboSprite:
   - {fileID: 21300000, guid: 4b6ff7802bd274f56b8a002687cc70f6, type: 3}
   - {fileID: 21300000, guid: bb874a0168abb4aacb2cfcb41e806d95, type: 3}
-  - {fileID: 21300000, guid: fabed6b9ad6b1436b8aa98913bb811d1, type: 3}
+  - {fileID: 21300000, guid: e3d47985d36aa4342bbcf64ec6c3aad1, type: 3}
   - {fileID: 21300000, guid: e46b21e6856c0448d9658e9afcdc48b6, type: 3}
   ingredient_image_only: {fileID: 7460213362318693053, guid: ed5a414a0e4ccb24fa937ff805426bbd,
     type: 3}

@@ -175,6 +175,7 @@ public class GameManager : MonoBehaviour
                 {
                     // random combo ingredient
                     Tuple<string, string> combo = combinedTypes[UnityEngine.Random.Range(0, combinedTypes.Length - 1)];
+                    Debug.Log("combo:"+combo.ToString());
                     createCombinedIngredient(pos, combo.Item1, combo.Item2);
                     
                 }
