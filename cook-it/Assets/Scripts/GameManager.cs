@@ -322,7 +322,11 @@ public class GameManager : MonoBehaviour
             case 1: 
                 fail = true;
                 failTimes += 1;
-                ratio = 1;
+                if (step == 1)
+                {
+                    //go back to the orginal ratio at 1
+                    ratio = 1;
+                }
                 break;
             case 2:
                 if (step == 1)
