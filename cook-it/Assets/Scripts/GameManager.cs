@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
 
     public Image recipe_progress;
     public Sprite[] progress;
-    int progress_index = 0;
+    int progress_index = (level-1)*4; // level 1 -> 0; level 2 -> 4, etc.
 
     public Image progress_pause;
     public Sprite[] progress_pause_sprites;
@@ -117,7 +117,7 @@ public class GameManager : MonoBehaviour
         }
 
         // set up pause images (in between each step)
-        progress_pause.enabled = false;
+        progress_pause.enabled = true;
         progress_pause.sprite = progress_pause_sprites[progress_index];
         speechBubble.gameObject.SetActive(false);
 
@@ -129,7 +129,7 @@ public class GameManager : MonoBehaviour
         switch (level)
         {
             case 1:
-                recipe[0] = new Dictionary<string, int> { { "flour", 4 }, { "sugar", 2 }, { "butter", 1 } };
+                recipe[0] = new Dictionary<string, int> { { "flour", 4 }, { "sugar", 2 }, { "butter", 2 } };
                 recipe[1] = new Dictionary<string, int> { { "oil", 3 }, { "heat", 2 } };
                 recipe[2] = new Dictionary<string, int> { { "frosting", 1 }, { "sugar", 2 } };
                 break;
@@ -181,7 +181,7 @@ public class GameManager : MonoBehaviour
                     Tuple<string, string> combo = combinedTypes[UnityEngine.Random.Range(0, combinedTypes.Length - 1)];
                     Debug.Log("combo:"+combo.ToString());
                     createCombinedIngredient(pos, combo.Item1, combo.Item2);
-                    
+
                 }
                 else
                 {
@@ -191,13 +191,13 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        /*if (Input.GetKeyDown(KeyCode.Space))
         {
             //clean the collected time and update the failTimes;
             failTimes += 1;
             failTimesText.text = "Fails: " + failTimes.ToString() + " times";
             resetIngredients();
-        }
+        }*/
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
@@ -291,7 +291,7 @@ public class GameManager : MonoBehaviour
         topclone.GetComponent<SpriteRenderer>().sprite = ingredientLookup[ingredient1+"-"+ingredient2];
         topclone.transform.SetParent(clone1.transform);
         Debug.Log("combined " + ingredientLookup[ingredient1 + "-" + ingredient2].name);
-        Debug.Log("create a combined ingredient:" 
+        Debug.Log("create a combined ingredient:"
                     + clone1.GetComponent<SpriteRenderer>().sprite.name
                     + ", " + clone2.GetComponent<SpriteRenderer>().sprite.name);
     }
@@ -302,7 +302,7 @@ public class GameManager : MonoBehaviour
          */
         int compareCode;
         //the new ingredient will also be added to collected in this function
-        compareCode = CompareAddedIngredient(collectedIngredients, recipe, ratio, step, addIngredient); 
+        compareCode = CompareAddedIngredient(collectedIngredients, recipe, ratio, step, addIngredient);
         updateText(collectedIngredients,compareCode);
     }
 
@@ -316,13 +316,13 @@ public class GameManager : MonoBehaviour
         {
             currentStates.text = "Congratulations! You have completed the cookies with a score of " + (100-badTasteIndex).ToString() + ".";
             Time.timeScale = 0;
-            
+
             return;
             // end the game - go to ending screen(?)
         }
         switch (compareCode){
             case 0: break;
-            case 1: 
+            case 1:
                 fail = true;
                 failTimes += 1;
                 if (step == 1)
@@ -334,8 +334,8 @@ public class GameManager : MonoBehaviour
             case 2:
                 if (step == 1)
                 {
-                    //update the ratio to desired value 
-                    ratio += 1; 
+                    //update the ratio to desired value
+                    ratio += 1;
                 }
                 else
                 {
@@ -351,8 +351,8 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
-                     
-        
+
+
         if (enterNextStep)
         {
             step += 1;
@@ -382,6 +382,11 @@ public class GameManager : MonoBehaviour
             {
                 audio.PlayOneShot(stageWin);
             }
+            // clear ingredients from screen and from bowl
+            GameObject[] ingredientsOnScreen = GameObject.FindGameObjectsWithTag("Ingredient");
+            foreach (GameObject ingredientsos in ingredientsOnScreen) {
+              Destroy(ingredientsos);
+            }
             resetIngredients();
             Time.timeScale = 0;
 
@@ -398,7 +403,7 @@ public class GameManager : MonoBehaviour
             resetIngredients();
             playerAnimator.SetTrigger("wrongCatch");
             //failTimesText.text = "Fails: " + failTimes.ToString() + " times";
-            
+
         }
         else
         {
@@ -413,7 +418,7 @@ public class GameManager : MonoBehaviour
                 audio.PlayOneShot(ingredient);
             }
         }
-        
+
 
         stepText.text = "Step " + step.ToString();
 
@@ -439,7 +444,7 @@ public class GameManager : MonoBehaviour
     }
 
     private int CompareAddedIngredient(Dictionary<string, int> collectedIngredients_, Dictionary<int, Dictionary<string, int>> recipe, int ratio, int step, string addIngredient)
-    {   /*This function takes the collected ingredients, recipe, ratio, current step and new added ingredient to compare 
+    {   /*This function takes the collected ingredients, recipe, ratio, current step and new added ingredient to compare
         Assume collectedIngredient(without new added one) contains nothing outside of the recipe[step-1]
         return value: 0--the new collected ingredients are in the recipe and do not exceed the required quantity (recipe[step]*ratio)
                       1--the new collected ingredients contain something does not belong to the recipe at this step
@@ -473,7 +478,7 @@ public class GameManager : MonoBehaviour
                 //check whether something exceed the required quantity
                 if (collectedIngredients_[addIngredient] > currentRecipe[addIngredient] * ratio)
                 {
-                    return 2; 
+                    return 2;
                 }
             }
             else
@@ -504,7 +509,7 @@ public class GameManager : MonoBehaviour
 
     public void updateIngredientTable(Dictionary<int, Dictionary<string, int>> recipe,int step , int ratio)
     {
-       
+
         Dictionary<string, int> currentRecipe = recipe[step - 1];
         List<string> recipe_keys_sorted = new List<string>(currentRecipe.Keys);
         recipe_keys_sorted.Sort();

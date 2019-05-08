@@ -1186,14 +1186,22 @@ MonoBehaviour:
   recipe_progress: {fileID: 1225631094}
   progress:
   - {fileID: 21300000, guid: 3c3e0abaad58a4f58879b03aa3a38d9c, type: 3}
-  - {fileID: 21300000, guid: 1b8e68fd7ab9d4b639a46869f4dc66f1, type: 3}
-  - {fileID: 21300000, guid: 4188e045cd8a84dcba41ab276fc9841c, type: 3}
+  - {fileID: 21300000, guid: 18bfa639887764dfa8bdefdda069b745, type: 3}
+  - {fileID: 21300000, guid: 9cb8ff5bb285949b5b9316d9c09df08c, type: 3}
   progress_pause: {fileID: 1934044096}
   progress_pause_sprites:
   - {fileID: 21300000, guid: 6269eacb863f44a18ad66e17f1aa0c7d, type: 3}
   - {fileID: 21300000, guid: 18bfa639887764dfa8bdefdda069b745, type: 3}
   - {fileID: 21300000, guid: 9cb8ff5bb285949b5b9316d9c09df08c, type: 3}
   - {fileID: 21300000, guid: fb8fc20ede13744709d87b9e942840d1, type: 3}
+  - {fileID: 21300000, guid: 44f26d34fe1664ee2a9488f5aa50b2f2, type: 3}
+  - {fileID: 21300000, guid: 7fbfb9f9dc4914d5ea3d62bdd4e3a0cc, type: 3}
+  - {fileID: 21300000, guid: 9377f9480ec2c4637a079b35c3e92f53, type: 3}
+  - {fileID: 21300000, guid: c17aa20246b6e45a488574cfe95be59b, type: 3}
+  - {fileID: 21300000, guid: 7ad109357674c4efb87770bef77b20be, type: 3}
+  - {fileID: 21300000, guid: a21cb6a055ea14fb393b8198ba4b0592, type: 3}
+  - {fileID: 21300000, guid: 707f1c1d2ad464d10b22cc4508f36ae7, type: 3}
+  - {fileID: 21300000, guid: 38319febb381245e08d179a8e3f91d1c, type: 3}
   leftWall: {fileID: 97971848}
   rightWall: {fileID: 750268279}
   ingredientTable:
@@ -2264,7 +2272,7 @@ PrefabInstance:
     - target: {fileID: 4855190516976376991, guid: c436eceda3178c842919fde50a68750b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6
+      value: 5.5
       objectReference: {fileID: 0}
     - target: {fileID: 4855190516976376991, guid: c436eceda3178c842919fde50a68750b,
         type: 3}
