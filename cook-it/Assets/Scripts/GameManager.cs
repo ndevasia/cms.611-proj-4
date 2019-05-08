@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     int numSteps;
     int ratio = 1;
     int badTasteIndex = 0;
+    public GameObject speechBubble;
 
     public static int level = 1;
     public string[] levelInstructions;
@@ -118,6 +119,7 @@ public class GameManager : MonoBehaviour
         // set up pause images (in between each step)
         progress_pause.enabled = false;
         progress_pause.sprite = progress_pause_sprites[progress_index];
+        speechBubble.gameObject.SetActive(false);
 
     }
 
@@ -243,6 +245,7 @@ public class GameManager : MonoBehaviour
         ratio = 1;
         failTimes = 0;
         overCollectedTimes=0;
+        speechBubble.gameObject.SetActive(false);
     }
 
     public void createIngredient(Vector3 pos, bool fromRecipe = false)
@@ -352,12 +355,28 @@ public class GameManager : MonoBehaviour
         
         if (enterNextStep)
         {
-            failTimesText.text = "Press Enter to start the next step!";
             step += 1;
 
             if (step > numSteps)
             {
                 audio.PlayOneShot(stageDone);
+                speechBubble.gameObject.SetActive(true);
+                if (failTimes <= 0 && overCollectedTimes <= 0)
+                {
+                    failTimesText.text = "You perfected the receipe in one try! " +
+                        "You must be a talented cook!";
+                }
+                else if (failTimes > 0 && overCollectedTimes <= 0)
+                {
+                    failTimesText.text = "You had to retry " + failTimes.ToString() + " times." +
+                        " Try not to waste ingredients next time. The taste is perfect though!";
+                }
+                else
+                {
+                    failTimesText.text = "You had to retry " + failTimes.ToString() + " times." +
+                        " Try not to waste ingredients next time. The taste is slightly off..." +
+                        " You over collected " + overCollectedTimes.ToString() + " times.";
+                }
             }
             else
             {
