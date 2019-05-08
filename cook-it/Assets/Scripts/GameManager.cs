@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
 
     public Image recipe_progress;
     public Sprite[] progress;
-    int progress_index = 0;
+    int progress_index = (level-1)*4; // level 1 -> 0; level 2 -> 4, etc.
 
     public Image progress_pause;
     public Sprite[] progress_pause_sprites;
@@ -116,7 +116,7 @@ public class GameManager : MonoBehaviour
         }
 
         // set up pause images (in between each step)
-        progress_pause.enabled = false;
+        progress_pause.enabled = true;
         progress_pause.sprite = progress_pause_sprites[progress_index];
 
     }
@@ -189,13 +189,13 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        /*if (Input.GetKeyDown(KeyCode.Space))
         {
             //clean the collected time and update the failTimes;
             failTimes += 1;
             failTimesText.text = "Fails: " + failTimes.ToString() + " times";
             resetIngredients();
-        }
+        }*/
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
@@ -362,6 +362,11 @@ public class GameManager : MonoBehaviour
             else
             {
                 audio.PlayOneShot(stageWin);
+            }
+            // clear ingredients from screen and from bowl
+            GameObject[] ingredientsOnScreen = GameObject.FindGameObjectsWithTag("Ingredient");
+            foreach (GameObject ingredientsos in ingredientsOnScreen) {
+              Destroy(ingredientsos);
             }
             resetIngredients();
             Time.timeScale = 0;
