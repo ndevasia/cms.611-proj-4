@@ -309,14 +309,7 @@ public class GameManager : MonoBehaviour
         bool enterNextStep = false;
         bool fail = false;
         bool overCollected = false;
-        if (step > numSteps)
-        {
-            currentStates.text = "Congratulations! You have completed the cookies with a score of " + (100-badTasteIndex).ToString() + ".";
-            Time.timeScale = 0;
-
-            return;
-            // end the game - go to ending screen(?)
-        }
+        
         switch (compareCode){
             case 0: break;
             case 1:
@@ -342,10 +335,21 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case 3:
+                updateIngredientTable(recipe, step, ratio);
                 enterNextStep = true;
                 break;
             default:
                 break;
+        }
+
+        if (step > numSteps)
+        {
+            currentStates.text = "Congratulations! You have completed the cookies with a score of " + (100 - badTasteIndex).ToString() + ".";
+
+            Time.timeScale = 0;
+
+            return;
+            // end the game - go to ending screen(?)
         }
 
 
