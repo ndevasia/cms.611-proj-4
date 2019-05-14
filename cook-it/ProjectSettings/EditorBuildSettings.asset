@@ -21,6 +21,9 @@ EditorBuildSettings:
     path: Assets/Scenes/TutorialScene-4.unity
     guid: bd2de18a3ef35074a8ce19efdb989097
   - enabled: 1
+    path: Assets/Scenes/creditsScene.unity
+    guid: a0cd0352c08959b45b832ab34bdd5be3
+  - enabled: 1
     path: Assets/Scenes/instructionsScene.unity
     guid: 5876cd59306134c8a992b07f461109d7
   - enabled: 1
@@ -63,8 +66,17 @@ EditorBuildSettings:
     path: Assets/Scenes/TutorialScene-11.unity
     guid: 6fe87c1a977ad8349973a3938b021549
   - enabled: 1
-    path: Assets/Scenes/creditsScene.unity
-    guid: a0cd0352c08959b45b832ab34bdd5be3
+    path: Assets/Scenes/communativeProperty.unity
+    guid: b66ccdc3b0e124189a34d65835d1e3d9
+  - enabled: 1
+    path: Assets/Scenes/associativeProperty.unity
+    guid: c998821718348426f8a5a022498b9816
+  - enabled: 1
+    path: Assets/Scenes/distributiveProperty.unity
+    guid: cf55263ac17f54eb08874246b7f68235
+  - enabled: 1
+    path: Assets/Scenes/incorrectCatch.unity
+    guid: b66aefac07ca64a03893b21c512a6901
   - enabled: 0
     path: Assets/Scenes/TutorialScene-3.unity
     guid: c1c9dd60b5c0a394584ba2ba17af4058

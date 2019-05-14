@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 using UnityEngine.SceneManagement;
 
 public class TutorialNext : MonoBehaviour
 {
-    
     public void NextScene()
     {
         Scene currentScene = SceneManager.GetActiveScene();
@@ -26,6 +26,10 @@ public class TutorialNext : MonoBehaviour
         }
         else if (sceneName == "TutorialScene-4")
         {
+            SceneManager.LoadScene("communativeProperty");
+        }
+        else if (sceneName == "communativeProperty")
+        {
             SceneManager.LoadScene("TutorialScene-5");
         }
         else if (sceneName == "TutorialScene-5")
@@ -37,6 +41,10 @@ public class TutorialNext : MonoBehaviour
             SceneManager.LoadScene("TutorialScene-7");
         }
         else if (sceneName == "TutorialScene-7")
+        {
+            SceneManager.LoadScene("associativeProperty");
+        }
+        else if (sceneName == "associativeProperty")
         {
             SceneManager.LoadScene("TutorialScene-8");
         }
@@ -50,13 +58,16 @@ public class TutorialNext : MonoBehaviour
         }
         else if (sceneName == "TutorialScene-10")
         {
+            SceneManager.LoadScene("distributiveProperty");
+        }
+        else if (sceneName == "distributiveProperty")
+        {
             SceneManager.LoadScene("TutorialScene-11");
         }
-        else 
+        else
         {
             SceneManager.LoadScene("menuScene");
         }
     }
 
-    
 }

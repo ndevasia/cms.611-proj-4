@@ -155,7 +155,7 @@ public class GameManager : MonoBehaviour
         {
             //generate a new ingredient and assign properties
             currentTime += -genTime;
-            float i_x = UnityEngine.Random.Range(leftWall.transform.position[0]+1, rightWall.transform.position[0]-1);
+            float i_x = UnityEngine.Random.Range(leftWall.transform.position[0]+6, rightWall.transform.position[0]-1);
             Vector3 pos = new Vector3(i_x, 5, 0);
             createIngredient(pos);
 
